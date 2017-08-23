@@ -1,3 +1,7 @@
+
+rem  git clone https://github.com/cristianalecu/Django.git
+
+
 call git init
 call git config --global user.name "Cristian Alecu"
 call git config --global user.email cristian.alecu@gmail.com
