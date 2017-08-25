@@ -4,3 +4,8 @@ __pycache__
 orderenv
 db.sqlite3
 .DS_Store
+.vscode
+.project
+.pydevproject
+
+frobshop/media
