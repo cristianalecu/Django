@@ -2,6 +2,7 @@
 ~
 __pycache__
 orderenv
+pollenv
 db.sqlite3
 .DS_Store
 .vscode
