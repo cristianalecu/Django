@@ -17,6 +17,11 @@ from oscar.defaults import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+SITE_PATH = os.path.abspath(os.path.dirname(__file__))
+PROJECT_PATH = os.path.normpath(os.path.join(SITE_PATH, '..', '..'))
+SRC_PATH = os.path.join(PROJECT_PATH, 'src')
+if SRC_PATH not in sys.path:
+    sys.path.insert(0, SRC_PATH)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -142,10 +147,10 @@ WSGI_APPLICATION = 'frobshop.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DjangoEcom',
-        'USER': 'admin',
-        'PASSWORD': 'go4admin',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'USER': '',
+        'PASSWORD': '',
         'HOST' : '',
         'PORT' : '',
         'ATOMIC_REQUESTS': True
