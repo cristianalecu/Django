@@ -1,12 +1,19 @@
 .pyc
+.metadata
 ~
 __pycache__
 orderenv
 pollenv
-db.sqlite3
+Django-1.11.4
+django-cms-release-3.4.x
+django-oscar-master
 .DS_Store
 .vscode
 .project
 .pydevproject
+
+ordersite/db.sqlite3
+
+pollsite/db.sqlite3
 
 frobshop/media
