@@ -151,6 +151,10 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'USER': '',
         'PASSWORD': '',
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'DjangoEcom',
+        # 'USER': 'admin',
+        # 'PASSWORD': 'go4admin',
         'HOST' : '',
         'PORT' : '',
         'ATOMIC_REQUESTS': True
