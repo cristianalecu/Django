@@ -17,3 +17,4 @@ ordersite/db.sqlite3
 pollsite/db.sqlite3
 
 frobshop/media
+frobshop/db.sqlite3

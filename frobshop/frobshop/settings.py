@@ -41,7 +41,7 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 SQL_DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.67', 'cristianalecu.pythonanywhere.com']
+ALLOWED_HOSTS = ['192.168.1.67', 'cristianalecu.pythonanywhere.com', 'cristianalecu07.pythonanywhere.com']
 
 ADMINS = (
     ('Cristian Alecu', 'cristian.alecu@gmail.com'),
