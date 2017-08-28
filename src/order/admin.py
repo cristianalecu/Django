@@ -11,6 +11,8 @@ class OrderAdmin(admin.ModelAdmin):
     fieldsets = [
         (None              , {'fields': ['author']}),
         (None              , {'fields': ['comments']}),
+        (None              , {'fields': ['status']}),
+        (None              , {'fields': ['total']}),
         ('Date information', {'fields': ['pub_date']}),
     ]
     inlines = [OrderItemsInline]
