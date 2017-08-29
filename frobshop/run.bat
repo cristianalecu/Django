@@ -1,2 +1,2 @@
-call ..\orderenv\Scripts\activate.bat
+call ..\ordersite\orderenv\Scripts\activate.bat
 call python manage.py runserver 0.0.0.0:8000
