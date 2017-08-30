@@ -15,12 +15,13 @@ django-oscar-master
 psspython-cloud_orders-22d749304e7f.zip
 
 ordersite/db.sqlite3
-ordersite/orderenv
+ordersite/ordersenv
 
 pollsite/db.sqlite3
 pollsite/pollenv
 
 frobshop/media
+frobshop/fromenv
 frobshop/db.sqlite3
 
 Django-1.10.7
