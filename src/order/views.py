@@ -1,6 +1,6 @@
 
-from django.http import HttpResponseRedirect
-from django.core import urlresolvers
+from django.shortcuts import render, HttpResponse
+
 
 def home(request):
-    return HttpResponseRedirect(urlresolvers.reverse('admin:app_list', args=("order",)))
+    return render(request, 'accounts/login.html')

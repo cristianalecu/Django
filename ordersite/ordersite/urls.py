@@ -1,28 +1,35 @@
-"""ordersite URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.11/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
-
-from django.conf.urls import include, url
-from django.contrib import admin
-from django.conf import settings
-from order import views
-
-urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^blog/', include('blog.urls')),
-    url(r'^$', views.home, name='home'),
-]
+an for the column groups 
+		var groups = this.s.groups;
+		var hungarianGroups = this.s.aoGroups;
+		if ( groups ) {
+			for ( var i=0, ien=groups.length ; i<ien ; i++ ) {
+				if ( groups[i].title ) {
+					hungarianGroups[i].sTitle = groups[i].title;
+				}
+				if ( groups[i].columns ) {
+					hungarianGroups[i].aiColumns = groups[i].columns;
+				}
+			}
+		}
+	},
 
 
+	/**
+	 * On each table draw, check the visibility checkboxes as needed. This allows any process to
+	 * update the table's column visibility and ColVis will still be accurate.
+	 *  @method  _fnDrawCallback
+	 *  @returns void
+	 *  @private
+	 */
+	"_fnDrawCallback": function ()
+	{
+		var columns = this.s.dt.aoColumns;
+		var buttons = this.dom.buttons;
+		var groups = this.s.aoGroups;
+		var button;
+
+		for ( var i=0, ien=buttons.length ; i<ien ; i++ ) {
+			button = buttons[i];
+
+			if ( button.__columnIdx !== undefined ) {
+				$('input', butt

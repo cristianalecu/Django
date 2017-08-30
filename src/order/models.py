@@ -37,7 +37,7 @@ class Item(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(decimal_places=2,max_digits=10)
-    image = models.ImageField()
+    image = models.ImageField(blank=True, null=True)
     price_type = models.IntegerField(choices=PRICE_TYPE_CHOICES, default=1)  
 
 

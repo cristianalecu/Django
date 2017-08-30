@@ -12,9 +12,13 @@ django-oscar-master
 .project
 .pydevproject
 
+psspython-cloud_orders-22d749304e7f.zip
+
 ordersite/db.sqlite3
+ordersite/orderenv
 
 pollsite/db.sqlite3
+pollsite/pollenv
 
 frobshop/media
 frobshop/db.sqlite3
@@ -25,4 +29,9 @@ django-cms-release-3.4.x
 django-oscar-master
 
 djangocms/djcmsenv
-djangocms/djcmsite/project.db
+djangocms/project.db
+djangocms/.settings
+
+ecomstore/ecsenv
+ordersite/.settings
+
