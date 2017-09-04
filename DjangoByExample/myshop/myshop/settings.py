@@ -37,9 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'shop',
     'cart',
     'orders',
-    'shop',
+    'payment',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -122,8 +124,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 CART_SESSION_ID = 'cart'
+
+# django-paypal settings
+PAYPAL_RECEIVER_EMAIL = ''
+PAYPAL_TEST = True
