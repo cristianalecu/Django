@@ -25,8 +25,46 @@ SECRET_KEY = '7l_84uc@&hllq0w039eqn$-&3z$j@%p6y63w8$mcd*$@$s0b-s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+TEMPLATE_DEBUG = DEBUG
 
+ADMINS = (
+    # ('Your Name', 'your_email@domain.com'),
+)
+
+SITE_NAME = 'Modern Musician'
+META_KEYWORDS = 'Music, instruments, sheet music, musician'
+META_DESCRIPTION = 'Modern Musician is an online supplier of instruments, sheet music, and other accessories for musicians'
+
+# CURRENT_PATH = os.path.abspath('.').decode('utf-8').replace('\\','/')
+CURRENT_PATH = os.path.abspath(os.path.dirname(__file__).decode('utf-8'))
+
+# Upon deployment, change to True
+ENABLE_SSL = False
+
+# Uncomment the following line after you have installed memcached on your local development machine
+#CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+
+MANAGERS = ADMINS
+
+SITE_ID = 1
+
+CACHE_TIMEOUT = 60 * 60
+
+
+PRODUCTS_PER_PAGE = 1
+PRODUCTS_PER_ROW = 4
+
+LOGIN_REDIRECT_URL = '/accounts/my_account/'
+
+SESSION_COOKIE_DAYS = 90
+SESSION_COOKIE_AGE = 60 * 60 * 24 * SESSION_COOKIE_DAYS 
+
+MEDIA_ROOT = os.path.join(CURRENT_PATH, 'static')
+MEDIA_URL = '/static/'
+ADMIN_MEDIA_PREFIX = '/static/admin_media/'
+
+
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 
@@ -37,6 +75,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.flatpages',
+    'ecomstore.catalog',
+    'ecomstore.cart',
+    'ecomstore.accounts',
+    'ecomstore.search',
+    'ecomstore.checkout',
+    'ecomstore.utils',
+    'ecomstore.stats',
+    'djangodblog',
+    'tagging',
+    'django.contrib.sitemaps',
+    'django.contrib.redirects',
+    'ecomstore.billing',
+    'ecomstore.caching',
 ]
 
 MIDDLEWARE = [
@@ -47,7 +99,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'djangodblog.DBLogMiddleware',
+    'ecomstore.marketing.urlcanon.URLCanonicalizationMiddleware',
+    'ecomstore.SSLMiddleware.SSLRedirect',
+    'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
 ]
+
+AUTH_PROFILE_MODULE = 'accounts.userprofile'
+
 
 ROOT_URLCONF = 'ecomstore.urls'
 
@@ -62,6 +122,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ecomstore.utils.context_processors.ecomstore',
             ],
         },
     },
@@ -98,6 +159,28 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# for use with URL Canonicalization Middleware:
+# this is the canonical hostname to be used by your app (required)
+CANON_URL_HOST = 'www.your-domain.com'
+# these are the hostnames that will be redirected to the CANON_URL_HOSTNAME 
+# (optional; if not provided, all non-matching will be redirected)
+CANON_URLS_TO_REWRITE = ['your-domain.com', 'other-domain.com']
+
+# Google Checkout API credentials
+GOOGLE_CHECKOUT_MERCHANT_ID = ''
+GOOGLE_CHECKOUT_MERCHANT_KEY = ''
+GOOGLE_CHECKOUT_URL = 'https://sandbox.google.com/checkout/api/checkout/v2/merchantCheckout/Merchant/' + GOOGLE_CHECKOUT_MERCHANT_ID
+
+# Authorize.Net API Credentials
+AUTHNET_POST_URL = 'test.authorize.net'
+AUTHNET_POST_PATH = '/gateway/transact.dll'
+AUTHNET_LOGIN = ''
+AUTHNET_KEY = ''
+
+# Google Analytics tracking ID
+# should take the form of 'UA-xxxxxxx-x', where the X's are digits
+ANALYTICS_TRACKING_ID = ''
 
 
 # Internationalization
