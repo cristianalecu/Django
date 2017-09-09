@@ -1,4 +1,4 @@
-"""bookmarks URL Configuration
+"""myblog URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -15,18 +15,18 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.conf import settings
-from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap
+from blog.sitemaps import PostSitemap
 
+sitemaps = {
+    'posts': PostSitemap,
+}
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^account/', include('account.urls')),
-    url(r'^images/', include('images.urls', namespace='images')),
-    # python-social-auth
-    url('social-auth/', include('social.apps.django_app.urls', namespace='social')),
+    url(r'^blog/', include('blog.urls', namespace='blog', app_name='blog')),
+    url(r'^sitemap\.xml$',
+        sitemap,
+        {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
