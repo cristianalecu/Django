@@ -152,7 +152,7 @@ ABSOLUTE_URL_OVERRIDES = {
 
 # python-social-auth settings
 AUTHENTICATION_BACKENDS = (
-    'social.backends.facebook.Facebook2OAuth2',
+    'social.backends.facebook.FacebookOAuth2',
     'social.backends.google.GoogleOAuth2',
     'social.backends.twitter.TwitterOAuth',
 
