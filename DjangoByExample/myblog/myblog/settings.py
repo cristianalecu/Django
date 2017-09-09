@@ -32,7 +32,7 @@ SECRET_KEY = 'q0co&pe)!3(^1dr4p4@kqy-+(r4!l3$po+#-27dk@aa)0p6hhl'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'cristianalecu.pythonanywhere.com']
 
 
 SITE_ID = 1
