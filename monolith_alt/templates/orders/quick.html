@@ -1,0 +1,160 @@
+{% load widget_tweaks %}
+
+<div class="section-body contain-lg">
+	<div class="row table-row">
+		<div class="col-lg-6">
+			<div class="card card-underline">
+				<div class="card-head">
+					<header>Place a quick order</header>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Product</th>
+									<th>Quantity</th>
+									<th>UM</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<form action="{% url "cart:cart_add_quick" %}" method="post">
+										<td>{{ search_form.product_name }}</td> 
+										<td>{{ search_form.quantity }}</td> 
+										<td>{{ search_form.um }}</td> 
+										<td>
+										<input type="hidden" id="add_customer_selected" name="add_customer_selected" class="customer_selected_holder" value="0">
+										<input class="btn btn-primary btn-xs" role="button" type="submit" value="Add"></td>
+										
+										{% csrf_token %}
+										{{ search_form.media }}
+									</form>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Product</th>
+									<th style="text-align:center">Quantity</th>
+									<th style="text-align:right">Unit price</th>
+									<th style="text-align:right">Price</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for item in cart %} 
+									{% with product=item.product %}
+										<tr>
+											<td>{{ product.name }}</td>
+											<td align="center">
+												<form action="{% url "cart:cart_add" product.id %}" method="post">
+												 {{ item.update_form.product_name.as_hidden }} 
+													{{ item.update_form.quantity }} 
+													{{ item.update_form.um }}
+													{{ item.update_form.update }}
+													{% csrf_token %}
+													<input type="hidden" id="add_customer_selected" name="add_customer_selected" class="customer_selected_holder" value="0">
+													<input class="btn btn-warning btn-xs" role="button" type="submit" value="Update">
+												</form>
+											</td>
+											<td class="num" align="right">${{ item.price }}</td>
+											<td class="num" align="right">${{ item.total_price }}</td>
+											<td align="right">
+												<form action="{% url "cart:cart_remove" product.id %}" method="post">
+												{% csrf_token %}
+													<input type="hidden" id="del_customer_selected" name="del_customer_selected" class="customer_selected_holder" value="0">
+													<input class="btn btn-danger btn-xs" role="button" type="submit" value="Remove">
+												</form>
+											</td>
+										</tr>
+									{% endwith %} 
+								{% endfor %}
+								<tr class="total">
+									<td>Total</td>
+									<td></td>
+									<td></td>
+									<td class="num" align="right">
+										${{ cart.get_total_price|floatformat:"2" }}
+									</td>
+									<td></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-6">
+			<div class="card card-underline">
+				<div class="card-head">
+					<header>Quick order summary</header>
+				</div>
+
+				<div class="card-body">
+					<div class="row">
+						<div class="col-lg-6">
+							<ul>
+								{% for item in cart %}
+									<li>
+										{{ item.quantity }}x {{ item.product.name }}
+										<span>${{ item.total_price }}</span>
+									</li>
+								{% endfor %}
+							</ul>
+							<p>Total: ${{ cart.get_total_price|floatformat:"2" }}</p>
+						</div>
+						<div class="col-lg-6">
+							<form class="form" role="form" action="{% url "orders:order_create" %} "  method="post">
+								<div class="row">
+									<div id="quick_submit" class="form">
+										{% csrf_token %}
+										{% for field in quick_submit_form %}
+											{{ field | add_class:'form-control'}}
+											{{ field.errors }}
+										{% endfor %}
+									
+										{{ quick_submit_form.non_field_errors }}		
+									</div>
+								</div>
+				
+							<div class="card-actionbar-row">
+								<input type="submit" class="btn btn-primary pull-right" value="Place order">
+							</div>
+				
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script type="text/javascript">
+var customer_id;
+
+$(document).ready(function(){
+	$('select[name=customer]').change(function(){
+		customer_id = $(this).val();
+		request_url = '/users/get-customers/' + customer_id + '/';
+		$.ajax({
+			url: request_url,
+			success: function(data){
+				$('#id_first_name').val(data[0].fields.first_name);
+				$('#id_last_name').val(data[0].fields.last_name);
+				$('#id_email').val(data[0].fields.email);
+				$('#id_address').val(data[0].fields.address);
+				$('#id_phone').val(data[0].fields.phone);
+				$('.customer_selected_holder').val(data[0].pk);
+				sessionStorage.setItem("customer_selected", ""+data[0].pk);
+			}
+		})
+	})
+});
+</script>
+</div>

@@ -1,0 +1,1576 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"product",
+				"products"
+			],
+			[
+				"data",
+				"dataset"
+			],
+			[
+				"or",
+				"orders_of_customer"
+			],
+			[
+				"suppi",
+				"supplier"
+			],
+			[
+				"products",
+				"products_dict"
+			],
+			[
+				"supp",
+				"supplier_id"
+			],
+			[
+				"Port",
+				"PortfolioProduct"
+			],
+			[
+				"pro",
+				"product_name"
+			],
+			[
+				"de",
+				"default"
+			],
+			[
+				"u",
+				"USER_TYPE_CHOICES"
+			],
+			[
+				"re",
+				"request"
+			],
+			[
+				"qu",
+				"quantity"
+			],
+			[
+				"pr",
+				"ProfileAdmin"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "orders/views.py",
+			"settings":
+			{
+				"buffer_size": 5623,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Searching 810 files for \"cart.\"\n\nD:\\WORK\\cloud_orders\\monolith_alt\\cart\\cart.py:\n   38  \n   39  \tdef __iter__(self):\n   40: \t\tproduct_ids = self.cart.keys()\n   41  \t\tproducts = Product.objects.filter(id__in=product_ids)\n   42  \t\t\n   ..\n   44  \t\t\tself.cart[str(product.id)]['product'] = product\n   45  \t\t\n   46: \t\tfor item in self.cart.values():\n   47  \t\t\titem['price'] = Decimal(item['price'])\n   48  \t\t\titem['total_price'] = item['price'] * item['quantity']\n   ..\n   50  \n   51  \tdef __len__(self):\n   52: \t\treturn sum(item['quantity'] for item in self.cart.values())\n   53  \n   54  \tdef get_total_price(self):\n   55: \t\treturn sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())\n   56  \n   57  \tdef clear(self):\n\nD:\\WORK\\cloud_orders\\monolith_alt\\cart\\views.py:\n   23  \n   24  \t\tp_id = str(product.id)\n   25: \t\tif p_id not in cart.cart.keys():\n   26  \t\t\tmsg = \"Product successfully added!\"\n   27  \t\telse:\n   28  \t\t\tmsg = \"Product successfully updated!\"\n   29  \n   30: \t\tcart.add(product=product, quantity=cd['quantity'], um=cd['um'], update=cd['update'])\n   31  \t\treturn redirect(request.META.get('HTTP_REFERER'), messages.success(request, msg, 'alert-success'))\n   32  \telse :\n   ..\n   37  \tcart = Cart(request)\n   38  \tproduct = get_object_or_404(Product, id=product_id)\n   39: \tcart.remove(product)\n   40  \tmsg = \"Product removed!\"\n   41  \treturn redirect(request.META.get('HTTP_REFERER'), messages.success(request, msg, 'alert-success'))\n\nD:\\WORK\\cloud_orders\\monolith_alt\\monolith\\settings.py:\n   74                  'django.contrib.auth.context_processors.auth',\n   75                  'django.contrib.messages.context_processors.messages',\n   76:                 'cart.context_processors.cart',\n   77              ],\n   78          },\n\nD:\\WORK\\cloud_orders\\monolith_alt\\monolith\\urls.py:\n   11  \turl(r'^users/', include('users.urls', namespace='users')),\n   12  \turl(r'^orders/', include('orders.urls', namespace='orders')),\n   13: \turl(r'^cart/', include('cart.urls', namespace='cart')),\n   14  \turl(r'^products/', include('shop.urls', namespace='shop')),\n   15  \turl(r'^portfolios/', include('portfolios.urls', namespace='portfolios')),\n\nD:\\WORK\\cloud_orders\\monolith_alt\\orders\\views.py:\n    6  \n    7  from shop.models import UnitMeasure\n    8: from cart.cart import Cart\n    9  from users.models import Customer\n   10  \n   ..\n   34  \n   35  \t\t\t#pika\n   36: \t\t\tcreate_order2(order, cart.values())\n   37  \n   38  \t\tfor item in cart:\n   ..\n   47  \t\t\n   48  \t\t# clear the cart\n   49: \t\tcart.clear()\n   50  \t\treturn redirect(request.META.get('HTTP_REFERER'), messages.success(request, \"Order {} added successfully!\".format(order.id), 'alert-success'))\n   51  \t\t# return render(request, 'orders/created.html', {'order': order}) \n\nD:\\WORK\\cloud_orders\\monolith_alt\\portfolios\\views.py:\n    7  from .forms import ProductForm, PortfolioForm\n    8  from users.models import Profile\n    9: from cart.cart import Cart\n   10  from shop.models import UnitMeasure\n   11  \n   ..\n   77  \t\t\tportfolio = get_object_or_404(Portfolio, id=request.POST['portfolio_id'])\n   78  \t\t\tcart = Cart(request)\n   79: \t\t\tcart.clear()\n   80  \t\t\tfor product in portfolio.products.all():\n   81  \t\t\t\tprod = product.product\n   82: \t\t\t\tcart.add(prod, um=product.um.id, quantity=product.quantity)\n   83  \treturn redirect('dashboard')\n   84  \n\nD:\\WORK\\cloud_orders\\monolith_alt\\shop\\views.py:\n    9  from slugify import slugify\n   10  \n   11: from cart.forms import CartAddProductForm\n   12: from cart.cart import Cart\n   13  from orders.forms import OrderCreateForm\n   14  from orders.views import get_orders_of_user, chart_ordered_products, get_chart_ordered_amounts\n\nD:\\WORK\\cloud_orders\\monolith_alt\\templates\\cart\\detail.html:\n   49  \t\t\t\t\t\t\t\t\t    <td></td>\n   50  \t\t\t\t\t\t\t\t\t    <td class=\"num\">\n   51: \t\t\t\t\t\t\t\t\t        ${{ cart.get_total_price|floatformat:\"2\" }}\n   52  \t\t\t\t\t\t\t\t\t    </td>\n   53  \t\t\t\t\t\t\t\t\t</tr>\n\nD:\\WORK\\cloud_orders\\monolith_alt\\templates\\orders\\create.html:\n   20  \t\t\t\t\t        {% endfor %}\n   21  \t\t\t\t\t    </ul>\n   22: \t\t\t\t\t    <p>Total: ${{ cart.get_total_price|floatformat:\"2\" }}</p>\n   23  \t\t\t\t\t<form class=\"form\" role=\"form\" action=\"\" method=\"post\">\n   24  \t\t\t\t\t\t<div class=\"row\">\n\nD:\\WORK\\cloud_orders\\monolith_alt\\templates\\orders\\quick.html:\n   76  \t\t\t\t\t\t\t\t\t<td></td>\n   77  \t\t\t\t\t\t\t\t\t<td class=\"num\" align=\"right\">\n   78: \t\t\t\t\t\t\t\t\t\t${{ cart.get_total_price|floatformat:\"2\" }}\n   79  \t\t\t\t\t\t\t\t\t</td>\n   80  \t\t\t\t\t\t\t\t\t<td></td>\n   ..\n  104  \t\t\t\t\t\t\t\t{% endfor %}\n  105  \t\t\t\t\t\t\t</ul>\n  106: \t\t\t\t\t\t\t<p>Total: ${{ cart.get_total_price|floatformat:\"2\" }}</p>\n  107  \t\t\t\t\t\t</div>\n  108  \t\t\t\t\t\t<div class=\"col-lg-6\">\n\nD:\\WORK\\cloud_orders\\monolith_alt\\templates\\shop\\header.html:\n   20                              <a href=\"{% url 'cart:cart_detail' %}\">\n   21                                  <span class=\"profile-info\">\n   22:                                     <h4 class=\"text-lg text-bold text-secondary\">{{ total_items }} item{{ total_items|pluralize }}, ${{ cart.get_total_price|floatformat:\"2\" }}</h4>\n   23                                  </span>\n   24                              </a>\n\n23 matches across 11 files\n",
+			"settings":
+			{
+				"buffer_size": 5142,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "orders/pika.py",
+			"settings":
+			{
+				"buffer_size": 505,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "{% extends 'shop/base.html' %}\n{% load static %}\n{% block title %}Product portfolios{% endblock %}\n{% load widget_tweaks %}\n{% block content %}\n\n<section>\n\n<div class=\"section-body contain-lg\">\n\t<div class=\"row table-row\">\n\t\t<div class=\"col-lg-6\">\n\t\t\t<div class=\"card card-underline\">\n\t\t\t\t<div class=\"card-head\">\n\t\t\t\t\t<header>Add a product portfolio</header>\n\t\t\t\t</div>\n\n\t\t\t\t<div class=\"card-body\">\n\t\t\t\t\t\n\n\t\t\t\t\t<form class =\"form\" method=\"post\" action=\"{% url \"portfolios:portfolio_add\" %}\">\n\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t\t\t\t<div class=\"form\">\n\t\t\t\t\t\t\t\t\t{% csrf_token %}\n\n\t\t\t\t\t\t\t\t\t{{ portfolio_form.name | add_class:'form-control' }}\n\t\t\t\t\t\t\t\t\t{% if portfolio_form.portfolio_name.errors %}\n\t\t\t\t\t\t\t\t\t\t{% for error in portfolio_form.portfolio_name.errors %}\n\t\t\t\t\t\t\t\t\t\t\t{{ error|escape }}\n\t\t\t\t\t\t\t\t\t\t{% endfor %}\n\t\t\t\t\t\t\t\t\t{% endif %}\n\t\t\t\t\t\t\t\t\t{{ portfolio_form.media }}\n\t\t\t\t\t\t\t\t\t</br>\n\t\t\t\t\t\t\t\t\t{{ portfolio_form.supplier | add_class:'form-control' }}\n\t\t\t\t\t\t\t\t\t{% if portfolio_form.supplier.errors %}\n\t\t\t\t\t\t\t\t\t\t{% for error in portfolio_form.supplier.errors %}\n\t\t\t\t\t\t\t\t\t\t\t{{ error|escape }}\n\t\t\t\t\t\t\t\t\t\t{% endfor %}\n\t\t\t\t\t\t\t\t\t{% endif %}\n\n\t\t\t\t\t\t\t\t\t<h4>Products</h4>\n\t\t\t\t\t\t\t\t\t<select id='supplier-product-options' multiple='multiple'>\n\t\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t\t\t<div class=\"table-responsive\" id=\"product-formset\" class=\"form\">\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-striped\">\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t\t\t\t{% for product_form in product_formset.forms %}\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>{{ product_form.product | add_class:'form-control product-select' | attr:\"id:product-select\" }}</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>{{ product_form.quantity | add_class:'form-control' }}</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>{{ product_form.um | add_class:'form-control' }}</td>\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t\t\t{% endfor %}\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t\t\t\t\t{{ product_formset.management_form }}\n\t\t\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t\t\t\t{% if product_formset.non_form_errors %}\n\t\t\t\t\t\t\t\t\t\t{% for error in product_formset.non_form_errors %}\n\t\t\t\t\t\t\t\t\t\t\t{{ error|escape }}\n\t\t\t\t\t\t\t\t\t\t{% endfor %}\n\t\t\t\t\t\t\t\t\t{% endif %}\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t    <div class=\"col-md-12\">\n\t\t\t\t\t\t\t<div class=\"card-actionbar-row\">\n\t\t\t\t\t\t\t\t<input type=\"submit\" value=\"Add portfolio\" class=\"btn btn-primary stick-bottom-right\"/>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</form>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class=\"col-lg-6\">\n\t\t\t<div class=\"card card-underline\">\n\t\t\t\t<div class=\"card-head\">\n\t\t\t\t\t<header>Product portfolio list</header>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"card-body\">\n\t\t\t\t\t{% if portfolios %}\n\t\t\t\t\t\t<div class=\"table-responsive\">\n\t\t\t\t\t\t\t<table class=\"table order-column\">\n\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<th>Name</th>\n\t\t\t\t\t\t\t\t\t\t<th>Supplier</th>\n\t\t\t\t\t\t\t\t\t\t<th>Estimated cost</th>\n\t\t\t\t\t\t\t\t\t\t<th style=\"text-align:center\">Order</th>\n\t\t\t\t\t\t\t\t\t\t<th style=\"text-align:center\">Delete</th>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t{% for portfolio in portfolios %}\n\t\t\t\t\t\t\t\t\t\t<tr class=\"gradeX\">\n\t\t\t\t\t\t\t\t\t\t\t<td><a href=\"{% url 'portfolios:portfolio_detail' portfolio.id %}\">{{ portfolio.name }}</a></td>\n\t\t\t\t\t\t\t\t\t\t\t<td>{{ portfolio.supplier }}</td>\n\t\t\t\t\t\t\t\t\t\t\t<td>{{ portfolio.get_cost|floatformat:2 }}</td>\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"text-center\">\n\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t<form id=\"portfolio_order\" action=\"{% url \"portfolios:portfolio_order\" %}\" method=\"post\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t{% csrf_token %}\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" name=\"portfolio_id\" value={{ portfolio.id }}>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<button type=\"submit\" class=\"btn btn-md btn-floating-action btn-primary\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<i class=\"fa fa-truck\"></i>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"text-center\">\n\t\t\t\t\t\t\t\t\t\t\t<a href=\"{% url 'portfolios:portfolio_delete' portfolio.id %}\" class=\"btn btn-floating-action btn-danger\" onclick=\"return confirm('Are you sure you want to delete the portfolio?')\"><i class=\"md md-delete\"></i> </a>\n\t\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t{% endfor %}\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t{% else %}\n\t\t\t\t\t\t<h3>You have no portfolios defined!</h3>\n\t\t\t\t\t{% endif %}\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n</section>\n<script src=\"{% static 'js/libs/jquery/jquery.formset.js' %}\"></script>\n\n<script src=\"{% static 'js/libs/multi-select/jquery.multi-select.js' %}\"></script>\n<script type=\"text/javascript\">\n\t$('#supplier-product-options').multiSelect();\n</script>\n\n<script type=\"text/javascript\">\n\t$(function() {\n\t\t$('#product-formset tbody tr').formset({\n\t\t\taddText:'<i class=\"fa fa-plus\"></i>',\n\t\t\taddCssClass:'btn btn-md btn-floating-action btn-primary',\n\t\t\tdeleteCssClass:'btn btn-floating-action btn-danger',\n       \t\tdeleteText: '<i class=\"md md-delete\"></i>'\n\t\t});\n\t})\n</script>\n\n\n<script type=\"text/javascript\">\n$(document).ready(function(){\n\t$('select[name=supplier]').change(function(){\n\t\tsupplier_id = $(this).val();\n\t\trequest_url = '/products/get-products/' + supplier_id + '/';\n\t\t$.ajax({\n\t\t\turl: request_url,\n\t\t\tsuccess: function(data){\n\t\t\t\t$(\"#supplier-product-options\").empty();\n\t\t\t\t$.each(data, function(key, value){\n\t\t\t\t\t\t$(\"#supplier-product-options\").append('<option value=\"' + value.pk + '\">' + value.fields.name +'</option>');\n\t\t\t\t\t});\n\t\t\t\t$('#supplier-product-options').multiSelect('refresh');\n\t\t\t}\n\t\t})\n\t})\n});\n</script>\n{% endblock %}",
+			"file": "templates/portfolios/product/list.html",
+			"file_size": 5447,
+			"file_write_time": 131490924983129292,
+			"settings":
+			{
+				"buffer_size": 5297,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "templates/shop/base.html",
+			"settings":
+			{
+				"buffer_size": 3848,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "cart/cart.py",
+			"settings":
+			{
+				"buffer_size": 1714,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "templates/orders/detail.html",
+			"settings":
+			{
+				"buffer_size": 4019,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "orders/urls.py",
+			"settings":
+			{
+				"buffer_size": 590,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "templates/orders/list_naked.html",
+			"settings":
+			{
+				"buffer_size": 2006,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "templates/users/customer/import.html",
+			"settings":
+			{
+				"buffer_size": 2175,
+				"encoding": "UTF-8",
+				"line_ending": "Windows",
+				"name": "{% extends 'base.html' %}"
+			}
+		},
+		{
+			"file": "monolith/settings.py",
+			"settings":
+			{
+				"buffer_size": 4091,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "shop/admin.py",
+			"settings":
+			{
+				"buffer_size": 899,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "monolith/celery.py",
+			"settings":
+			{
+				"buffer_size": 213,
+				"encoding": "UTF-8",
+				"line_ending": "Windows",
+				"name": "import os"
+			}
+		},
+		{
+			"file": "monolith/__init__.py",
+			"settings":
+			{
+				"buffer_size": 63,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "orders/tasks.py",
+			"settings":
+			{
+				"buffer_size": 267,
+				"encoding": "UTF-8",
+				"line_ending": "Windows",
+				"name": "import string"
+			}
+		},
+		{
+			"file": "templates/shop/product/import.html",
+			"settings":
+			{
+				"buffer_size": 2171,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "templates/shop/menubar.html",
+			"settings":
+			{
+				"buffer_size": 2929,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "users/urls.py",
+			"settings":
+			{
+				"buffer_size": 808,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "users/views.py",
+			"settings":
+			{
+				"buffer_size": 5925,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "shop/resources.py",
+			"settings":
+			{
+				"buffer_size": 233,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "shop/views.py",
+			"settings":
+			{
+				"buffer_size": 5029,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "portfolios/views.py",
+			"settings":
+			{
+				"buffer_size": 2980,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "shop/urls.py",
+			"settings":
+			{
+				"buffer_size": 669,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "templates/users/customer/list.html",
+			"settings":
+			{
+				"buffer_size": 3394,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "cart/forms.py",
+			"settings":
+			{
+				"buffer_size": 752,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 334.0,
+		"last_filter": "html",
+		"selected_items":
+		[
+			[
+				"html",
+				"HTMLPrettify"
+			],
+			[
+				"htmlpre",
+				"HTMLPrettify"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Install Package Control"
+			]
+		],
+		"width": 400.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/D/WORK/cloud_orders/monolith_alt",
+		"/D/WORK/cloud_orders/monolith_alt/cart",
+		"/D/WORK/cloud_orders/monolith_alt/monolith",
+		"/D/WORK/cloud_orders/monolith_alt/orders",
+		"/D/WORK/cloud_orders/monolith_alt/portfolios",
+		"/D/WORK/cloud_orders/monolith_alt/shop",
+		"/D/WORK/cloud_orders/monolith_alt/templates",
+		"/D/WORK/cloud_orders/monolith_alt/templates/cart",
+		"/D/WORK/cloud_orders/monolith_alt/templates/orders",
+		"/D/WORK/cloud_orders/monolith_alt/templates/portfolios",
+		"/D/WORK/cloud_orders/monolith_alt/templates/portfolios/product",
+		"/D/WORK/cloud_orders/monolith_alt/templates/shop",
+		"/D/WORK/cloud_orders/monolith_alt/templates/shop/product",
+		"/D/WORK/cloud_orders/monolith_alt/templates/users",
+		"/D/WORK/cloud_orders/monolith_alt/templates/users/customer",
+		"/D/WORK/cloud_orders/monolith_alt/users"
+	],
+	"file_history":
+	[
+		"/D/WORK/cloud_orders/monolith_alt/orders/pika.py",
+		"/D/WORK/cloud_orders/monolith_alt/shop/backends.py",
+		"/D/WORK/cloud_orders/monolith_alt/users/resources.py",
+		"/D/WORK/cloud_orders/monolith_alt/orders/resources.py",
+		"/D/WORK/cloud_orders/monolith_alt/monolith/settings.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/shop/menubar.html",
+		"/D/WORK/cloud_orders/monolith_alt/portfolios/urls.py",
+		"/D/WORK/cloud_orders/monolith_alt/cart/cart.py",
+		"/D/WORK/cloud_orders/monolith_alt/static/js/libs/jquery/jquery.formset.js",
+		"/D/WORK/cloud_orders/monolith_alt/portfolios/forms.py",
+		"/D/WORK/cloud_orders/monolith_alt/users/forms.py",
+		"/D/WORK/cloud_orders/monolith_alt/users/urls.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/portfolios/product/list.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/users/customer/list.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/users/signup.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/orders/list.html",
+		"/D/WORK/cloud_orders/monolith_alt/orders/models.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/orders/create.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/orders/list_naked.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/users/customer/detail.html",
+		"/D/WORK/cloud_orders/monolith_alt/users/views.py",
+		"/D/WORK/cloud_orders/monolith_alt/portfolios/views.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/orders/quick.html",
+		"/D/WORK/cloud_orders/monolith_alt/orders/forms.py",
+		"/D/WORK/cloud_orders/monolith_alt/users/models.py",
+		"/D/WORK/cloud_orders/monolith_alt/shop/views.py",
+		"/D/WORK/cloud_orders/monolith_alt/orders/views.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/portfolios/list.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/portfolios/customer/detail.html",
+		"/D/WORK/cloud_orders/monolith_alt/portfolios/models.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/portfolios/customer/list.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/portfolios/detail.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/portfolios/product/detail.html",
+		"/D/WORK/cloud_orders/monolith_alt/static/bootstrap-3.3.7-dist/css/bootstrap.css",
+		"/D/WORK/cloud_orders/monolith_alt/shop/lookups.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/shop/base.html",
+		"/D/WORK/cloud_orders/monolith_alt/cart/views.py",
+		"/D/WORK/cloud_orders/monolith_alt/cart/context_processors.py",
+		"/D/WORK/cloud_orders/monolith_alt/shop/urls.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/shop/product/list_naked.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/shop/dashboard.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/orders/detail.html",
+		"/D/WORK/cloud_orders/monolith_alt/shop/models.py",
+		"/D/WORK/cloud_orders/monolith_alt/shop/admin.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/shop/product/product_autocomplete.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/cart/detail.html",
+		"/D/WORK/cloud_orders/monolith_alt/shop/templatetags/portfolios.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/portfolios/portfolio_product_select.html",
+		"/D/WORK/cloud_orders/monolith_alt/monolith/urls.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/shop/product/detail.html",
+		"/D/WORK/cloud_orders/monolith_alt/cart/urls.py",
+		"/D/WORK/cloud_orders/monolith_alt/cart/forms.py",
+		"/D/WORK/cloud_orders/monolith_alt/orders/urls.py",
+		"/D/WORK/cloud_orders/monolith_alt/users/admin.py",
+		"/D/WORK/cloud_orders/monolith_alt/shop/forms.py",
+		"/D/WORK/cloud_orders/monolith_alt/templates/shop/header.html",
+		"/C/Users/lpa/Desktop/DOMS-master/orders/templates/login.html",
+		"/D/WORK/cloud_orders/monolith_alt/templates/users/login.html",
+		"/D/WORK/cloud_orders/monolith_alt/orders/admin.py",
+		"/D/WORK/cloud_orders/monolith_alt/orders/migrations/0002_auto_20170705_1009.py",
+		"/C/Users/lpa/Desktop/DOMS-master/DOMS/urls.py",
+		"/C/Users/lpa/Desktop/DOMS-master/orders/views.py",
+		"/D/WORK/cloud_orders/monolith_alt/shop/templatetags/dashboard.py",
+		"/D/WORK/cloud_orders/monolith_alt/static/js/core/DemoCharts.js",
+		"/D/WORK/cloud_orders/monolith_alt/templates/shop/product/list.html",
+		"/D/WORK/cloud_orders/monolith/static/bootstrap-3.3.7-dist/css/bootstrap.css",
+		"/D/WORK/cloud_orders/monolith/static/css/bootstrap.css",
+		"/D/WORK/cloud_orders/monolith/static/css/materialadmin.css",
+		"/D/WORK/cloud_orders/monolith/templates/shop/base.html",
+		"/D/WORK/cloud_orders/monolith/static/js/libs/bootstrap/bootstrap.js",
+		"/D/WORK/cloud_orders/monolith/static/js/libs/jquery/jquery-1.11.2.js",
+		"/D/WORK/cloud_orders/monolith/orders/views.py",
+		"/D/WORK/cloud_orders/monolith/static/js/libs/flot/jquery.flot.js",
+		"/D/WORK/cloud_orders/monolith/shop/views.py",
+		"/D/WORK/cloud_orders/monolith/orders/urls.py",
+		"/D/WORK/cloud_orders/monolith/orders/models.py",
+		"/D/WORK/cloud_orders/monolith/cart/cart.py",
+		"/D/WORK/cloud_orders/monolith/templates/shop/product/list_naked.html",
+		"/D/WORK/cloud_orders/monolith/monolith/settings.py",
+		"/D/WORK/cloud_orders/monolith/templates/orders/order/order.html",
+		"/D/WORK/cloud_orders/monolith/users/models.py",
+		"/D/WORK/cloud_orders/monolith/users/admin.py",
+		"/D/WORK/cloud_orders/monolith/templates/orders/order/create.html",
+		"/D/WORK/cloud_orders/monolith/templates/orders/detail.html",
+		"/D/WORK/cloud_orders/monolith/templates/orders/order/created.html",
+		"/D/WORK/cloud_orders/monolith/static/js/libs/DataTables/extensions/TableTools/js/dataTables.tableTools.js",
+		"/D/WORK/cloud_orders/monolith/templates/orders/order/list.html",
+		"/D/WORK/cloud_orders/monolith/templates/cart/detail.html",
+		"/D/WORK/cloud_orders/monolith/templates/shop/product/list.html",
+		"/D/WORK/cloud_orders/monolith/templates/shop/product/detail.html",
+		"/D/WORK/cloud_orders/monolith/shop/templatetags/sidebar.py",
+		"/D/WORK/cloud_orders/monolith/templates/orders/list.html",
+		"/D/WORK/cloud_orders/monolith/templates/users/login.html",
+		"/D/WORK/cloud_orders/monolith/users/forms.py",
+		"/D/WORK/cloud_orders/monolith/users/views.py",
+		"/D/WORK/cloud_orders/monolith/templates/users/signup.html",
+		"/D/WORK/cloud_orders/monolith/templates/shop/login.html",
+		"/D/WORK/cloud_orders/monolith/shop/tags.py",
+		"/D/WORK/cloud_orders/monolith/users/urls.py",
+		"/D/WORK/cloud_orders/monolith/cart/views.py",
+		"/D/WORK/cloud_orders/monolith/monolith/urls.py",
+		"/D/WORK/cloud_orders/monolith/orders/admin.py",
+		"/D/WORK/cloud_orders/monolith/shop/models.py",
+		"/D/WORK/cloud_orders/monolith/coupons/views.py",
+		"/D/WORK/cloud_orders/monolith/coupons/models.py",
+		"/D/WORK/cloud_orders/monolith/coupons/forms.py",
+		"/D/WORK/cloud_orders/monolith/static/css/dashboard.css",
+		"/D/WORK/cloud_orders/monolith/shop/urls.py",
+		"/D/WORK/cloud_orders/monolith/cart/urls.py",
+		"/D/WORK/cloud_orders/monolith/coupons/urls.py",
+		"/D/WORK/cloud_orders/monolith/coupons/admin.py",
+		"/D/WORK/cloud_orders/monolith/cart/context_processors.py",
+		"/D/WORK/cloud_orders/monolith/shop/admin.py",
+		"/D/WORK/cloud_orders/monolith/orders/forms.py",
+		"/D/WORK/cloud_orders/monolith/cart/forms.py",
+		"/D/WORK/cloud_orders/monolith/manage.py",
+		"/D/WORK/cloud_orders/monolith/templates/shop/home.html",
+		"/D/WORK/cloud_orders/monolith/shop/apps.py",
+		"/D/WORK/cloud_orders/monolith/templates/orders/product/list.html",
+		"/D/WORK/cloud_orders/monolith/gui/models.py",
+		"/D/WORK/cloud_orders/monolith/gui/views.py",
+		"/D/WORK/cloud_orders/monolith/templates/orders/login.html",
+		"/D/WORK/cloud_orders/monolith/templates/orders/base.html",
+		"/D/WORK/cloud_orders/monolith/templates/orders/product/detail.html",
+		"/D/WORK/cloud_orders/monolith/login/settings.py",
+		"/D/WORK/cloud_orders/monolith/gui/urls.py",
+		"/D/WORK/cloud_orders/monolith/login/urls.py",
+		"/C/Users/lpa/AppData/Local/Temp/Rar$DRa9512.18373/bootstrap-3.3.7/docs/examples/dashboard/index.html"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 90.0,
+		"where_history":
+		[
+			"D:\\WORK\\cloud_orders\\monolith_alt\\",
+			"D:\\WORK\\cloud_orders\\monolith_alt\\templates",
+			"D:\\WORK\\cloud_orders\\monolith_alt\\portfolios",
+			"D:\\WORK\\cloud_orders\\monolith_alt\\",
+			"D:\\WORK\\cloud_orders\\monolith_alt\\templates",
+			"D:\\WORK\\cloud_orders\\monolith_alt",
+			"D:\\WORK\\cloud_orders\\monolith_alt\\templates",
+			"D:\\WORK\\cloud_orders\\monolith_alt\\",
+			"D:\\WORK\\cloud_orders\\monolith_alt\\templates",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"',[ ",
+			"cart.",
+			"json",
+			"PORTFOLIO_SESSION_ID",
+			"except",
+			"order",
+			"fields",
+			"select2-selection",
+			"ProductAutocomplete",
+			"initial['first_name']",
+			"chart_ordered_amounts",
+			"chart_ordered_products",
+			"chart_ordered_products\n",
+			"<div class=\"card-body\">",
+			"commit=False",
+			"error",
+			"portfolio",
+			"submit",
+			"portfolio_product",
+			"delete",
+			"portfolio_add",
+			"portfolio",
+			"showDeleteLinks",
+			"formTemplate",
+			"add po",
+			"alert-success",
+			"table",
+			"table\n",
+			"ui",
+			"redi",
+			"clear",
+			"Cart",
+			"portfolio_product_select",
+			"redirect",
+			"action",
+			"order_id",
+			"portfolio_id",
+			"order_id",
+			"fa-",
+			"Portfolio",
+			"fa-",
+			"messages.success",
+			"portfolio_order",
+			"portfolio_order\n",
+			"portfolio_order",
+			"post",
+			":",
+			"name",
+			"postal",
+			"get_orders_of_user",
+			"supp",
+			"action=\"",
+			"create",
+			"order_create",
+			"create",
+			"ProductAutocomplete",
+			"productautocomplete",
+			"quick_submit",
+			"OrderCreateForm",
+			"update_quantity",
+			"update_form",
+			"update_quantity",
+			"OrderItem",
+			"<form class=\"form\" role=\"form\" action=\"\" method=\"post\">\n\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t<div class=\"col-sm-6\">\n\t\t\t\t\t\t\t\t<div class=\"form-group floating-label\">\n\t\t\t\t\t\t\t\t\t{{ form.first_name | add_class:'form-control' }}\n\t\t\t\t\t\t\t\t\t<label for=\"regular2\">First name</label>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"form-group floating-label\">\n\t\t\t\t\t\t\t\t\t{{ form.last_name | add_class:'form-control' }}\n\t\t\t\t\t\t\t\t\t<label for=\"regular2\">Last name</label>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"form-group floating-label\">\n\t\t\t\t\t\t\t\t\t{{ form.email | add_class:'form-control'}}\n\t\t\t\t\t\t\t\t\t<label for=\"regular2\">Email</label>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"form-group floating-label\">\n\t\t\t\t\t\t\t\t\t{{ form.address | add_class:'form-control'}}\n\t\t\t\t\t\t\t\t\t<label for=\"regular2\">Address</label>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"form-group floating-label\">\n\t\t\t\t\t\t\t\t\t{{ form.postal_code | add_class:'form-control'}}\n\t\t\t\t\t\t\t\t\t<label for=\"regular2\">Post code</label>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"form-group floating-label\">\n\t\t\t\t\t\t\t\t\t{{ form.city | add_class:'form-control'}}\n\t\t\t\t\t\t\t\t\t<label for=\"regular2\">City</label>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n                            <div class=\"col-md-12\">\n\t\t\t\t\t\t\t\t<div class=\"card-actionbar-row\">\n\t\t\t\t\t\t\t\t\t<input type=\"submit\" class=\"btn btn-primary\" value=\"SUBMIT\">\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\n\t\t\t\t\t    {% csrf_token %}\n\t\t\t\t\t</form>",
+			"create.html",
+			"quick.html",
+			"cart_add",
+			"update_quantity_form",
+			"1",
+			"discount",
+			"coupon",
+			"coupons",
+			"cou",
+			"fav",
+			"def login",
+			"del login",
+			"login.html",
+			"if",
+			"naked",
+			".form-control:focus",
+			"box-shadow",
+			"focus",
+			"boots",
+			"input[type=\"te",
+			"input[type=\"text",
+			"input[type=\"test",
+			"message",
+			"messa",
+			"Tooltip.prototype.destroy = function () {",
+			"that.$element.trigger('shown.bs.' + that.type)",
+			"content",
+			"body",
+			"Mor",
+			"card-body",
+			"data2",
+			"query",
+			"from django.shortcuts import render, redirect, get_object_or_404\nfrom .models import Order, OrderItem\nfrom users.models import FavoriteProduct\nfrom .forms import OrderCreateForm\nfrom cart.cart import Cart\nfrom django.contrib import messages\nfrom django.template.loader import render_to_string\nfrom django.db.models import Sum, Count, F # does stuff with database field manipulation\n\nimport json\n\ndef order_create(request):\n\tif not request.user.is_authenticated:\n\t\treturn redirect('users:login')\n\n\tcart = Cart(request)\n\tif request.method == 'POST':\n\t\tform = OrderCreateForm(request.POST)\n\t\tif form.is_valid():\n\t\t\torder = form.save(commit=False)\n\t\t\torder.user = request.user\n\t\t\tif cart.coupon:\n\t\t\t\torder.coupon = cart.coupon\n\t\t\t\torder.discount = cart.coupon.discount\n\t\t\torder.save()\n\n\t\tfor item in cart:\n\t\t\tOrderItem.objects.create(order=order, product=item['product'], price=item['price'],\tquantity=item['quantity'])\n\t\t\tfav, created = FavoriteProduct.objects.get_or_create(user=request.user.profile, product=item['product'], defaults={'quantity': item['quantity'], 'times_bought':1},)\n\t\t\tif not created:\n\t\t\t\tfav.quantity = F('quantity') + item['quantity']\n\t\t\t\tfav.times_bought = F('times_bought') + 1\n\t\t\t\tfav.save()\n\n\t\t\n\t\t# clear the cart\n\t\tcart.clear()\n\t\treturn render(request, 'orders/created.html', {'order': order}) \n\telse:\n\t\tform = OrderCreateForm()\n\t\tform.initial['first_name'] = request.user.first_name\n\t\tform.initial['last_name'] = request.user.last_name\n\t\tform.initial['email'] = request.user.email\n\t\tif request.user.profile:\n\t\t\tform.initial['address'] = request.user.profile.address\n\t\t\tform.initial['postal_code'] = request.user.profile.postal_code\n\t\t\tform.initial['city'] = request.user.profile.city\n\n\treturn render(request,'orders/create.html',{'cart': cart, 'form': form})\n\ndef get_orders_of_user(user):\n\tif not user.is_anonymous:\n\t\torders = Order.objects.filter(user=user)\n\telse:\n\t\torders = None\n\n\treturn orders\n\ndef order_list(request):\n\torders = get_orders_of_user(request.user)\n\treturn render(request, 'orders/list.html', {'orders': orders})\n\ndef order_detail(request, order_id):\n\torder = get_object_or_404(Order, id=order_id, user=request.user)\n\tproducts = OrderItem.objects.filter(order=order)\n\treturn render(request, 'orders/detail.html', {'order': order, 'products': products})\n\n# def order_edit(request, order_id):\n# \torder = Order.objects.get(id=order_id, user=request.user)\n# \tif request.POST:\n# \t\tform = OrderForm(request.POST, instance=order)\n# \t\tif form.is_valid():\n# \t\t\tif form.save():\n# \t\t\t\treturn redirect('/', messages.success(request, 'Order was successfully updated.', 'alert-success'))\n# \t\t\telse:\n# \t\t\t\treturn redirect('/', messages.error(request, 'Data is not saved', 'alert-danger'))\n# \t\telse:\n# \t\t\treturn redirect('/', messages.error(request, 'Form is not valid', 'alert-danger'))\n# \telse:\n# \t\tform = OrderForm(instance=order)\n# \t\treturn render(request, 'edit.html', {'form':form})\n\n\ndef order_delete(request, order_id):\n\torder = Order.objects.get(id=order_id, user=request.user)\n\torder.delete()\n\treturn redirect('/', messages.success(request, 'Order was successfully deleted.', 'alert-success'))\n\ndef chart_ordered_products(user):\n\tdata=[]\n\tquery = OrderItem.objects.filter(order__user = user).values('order__id').annotate(quantity = Count('quantity')).order_by('order__id')\n\tfor row in query:\n\t\tdata.append([str(row['order__id']), str(row['quantity'])])\n\tdata2 = json.dumps(data)\n\twrapper = {}\n\twrapper['label']='items ordered'\n\twrapper['last']='true'\n\twrapper['data']=data\n\treturn wrapper\n\ndef chart_ordered_amounts(user):\n\tdata=[]\n\tquery = OrderItem.objects.filter(order__user = user).values('order__id').annotate(total_amount = Sum(F('quantity')*F('price'))).order_by('order__id')\n\tfor row in query:\n\t\tdata.append([str(row['order__id']), str(row['total_amount'])])\n\tdata2 = json.dumps(data)\n\twrapper = {}\n\twrapper['label']='$'\n\twrapper['last']='true'\n\twrapper['data']=data\n\treturn wrapper",
+			"visits",
+			"load dashboard",
+			"chart_ordered_products",
+			"order_list",
+			"{%",
+			"content",
+			"plot",
+			"DemoCharts",
+			"prototype",
+			"DemoCharts",
+			"materialadmin",
+			"get_favorite_products",
+			"ord",
+			"order_list",
+			"ink-rea",
+			" animation-dock",
+			"fixe",
+			"cente",
+			"'shop/base.html",
+			"@login_required",
+			"if",
+			"sSwfPath",
+			"csv",
+			"swf",
+			"\t\t\t\t\t\t\t\t\t\t\t\t\n",
+			"'),\n",
+			"btn",
+			"head",
+			"infotec",
+			"lg",
+			"redirect"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"customer",
+			"portfolio",
+			"orders"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "orders/views.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5623,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1157,
+								1157
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 135.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5142,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										145,
+										150
+									],
+									[
+										330,
+										335
+									],
+									[
+										554,
+										559
+									],
+									[
+										691,
+										696
+									],
+									[
+										853,
+										858
+									],
+									[
+										858,
+										863
+									],
+									[
+										997,
+										1002
+									],
+									[
+										1308,
+										1313
+									],
+									[
+										1698,
+										1703
+									],
+									[
+										1991,
+										1996
+									],
+									[
+										2288,
+										2293
+									],
+									[
+										2420,
+										2425
+									],
+									[
+										2521,
+										2526
+									],
+									[
+										2923,
+										2928
+									],
+									[
+										3127,
+										3132
+									],
+									[
+										3236,
+										3241
+									],
+									[
+										3446,
+										3451
+									],
+									[
+										3495,
+										3500
+									],
+									[
+										3825,
+										3830
+									],
+									[
+										4063,
+										4068
+									],
+									[
+										4364,
+										4369
+									],
+									[
+										4534,
+										4539
+									],
+									[
+										4982,
+										4987
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								338,
+								338
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "orders/pika.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 505,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								505
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "templates/portfolios/product/list.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5297,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1282,
+								2101
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 180.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "templates/shop/base.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3848,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1430,
+								1430
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "cart/cart.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1714,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1255,
+								1255
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 206.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "templates/orders/detail.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4019,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								395,
+								360
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 19,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "orders/urls.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 590,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								557,
+								557
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 23,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "templates/orders/list_naked.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2006,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1273,
+								1273
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 21,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "templates/users/customer/import.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2175,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1789,
+								1789
+							]
+						],
+						"settings":
+						{
+							"auto_name": "{% extends 'base.html' %}",
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 360.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "monolith/settings.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4091,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4007,
+								4028
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1980.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "shop/admin.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 899,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								94,
+								94
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "monolith/celery.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 213,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								210,
+								210
+							]
+						],
+						"settings":
+						{
+							"auto_name": "import os",
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "monolith/__init__.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 63,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								63,
+								63
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "orders/tasks.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 267,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								191,
+								191
+							]
+						],
+						"settings":
+						{
+							"auto_name": "import string",
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "templates/shop/product/import.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2171,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								886,
+								886
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 14,
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "templates/shop/menubar.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2929,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1354,
+								1354
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 135.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 22,
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": "users/urls.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 808,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								765,
+								780
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 15,
+					"type": "text"
+				},
+				{
+					"buffer": 18,
+					"file": "users/views.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5925,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5012,
+								5231
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1583.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 19,
+					"file": "shop/resources.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 233,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								169,
+								169
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 18,
+					"type": "text"
+				},
+				{
+					"buffer": 20,
+					"file": "shop/views.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5029,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								251,
+								216
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 21,
+					"file": "portfolios/views.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2980,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2058,
+								2074
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 416.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 16,
+					"type": "text"
+				},
+				{
+					"buffer": 22,
+					"file": "shop/urls.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 669,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								656,
+								656
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 17,
+					"type": "text"
+				},
+				{
+					"buffer": 23,
+					"file": "templates/users/customer/list.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3394,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								973,
+								980
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 540.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 20,
+					"type": "text"
+				},
+				{
+					"buffer": 24,
+					"file": "cart/forms.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 752,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								406,
+								406
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 24,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "proj.sublime-project",
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 424.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 283.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

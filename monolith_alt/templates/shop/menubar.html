@@ -1,0 +1,78 @@
+{% load static %}
+<div id="menubar" class="menubar animate">
+    <div class="menubar-scroll-panel">
+        <ul id="main-menu" class="gui-controls">
+            <li>
+                <a href="{% url 'dashboard' %}" >
+                    <div class="gui-icon"><i class="md md-home"></i></div>
+                    <span class="title">Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'portfolios:portfolio_list' %}" >
+                    <div class="gui-icon"><i class="fa fa-book"></i></div>
+                    <span class="title">Product portfolios</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'users:customer_list' %}" >
+                    <div class="gui-icon"><i class="fa fa-user"></i></div>
+                    <span class="title">Customers</span>
+                </a>
+            </li>
+
+           <li class="gui-folder expanded">
+                <a>
+                    <div class="gui-icon"><i class="fa fa-plus"></i></div>
+                    <span class="title">Import</span>
+                </a>
+                <ul>
+                    <li>
+                        <a href="{% url 'users:customer_import' %}">Customers</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'shop:product_import' %}">Products</a>
+                    </li>
+                </ul>
+            </li>
+            {% load sidebar %}
+            {% sidebar_categories as categories%}
+            {% sidebar_suppliers as suppliers%}
+            <li class="gui-folder expanded">
+                <a>
+                    <div class="gui-icon"><i class="fa fa-rocket"></i></div>
+                    <span class="title">Product categories</span>
+                </a>
+
+                <ul>
+                    {% for c in categories %}
+                        <li {% if category.slug == c.slug %}class="active"{% endif %}>
+                            <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li class="gui-folder expanded">
+                <a>
+                    <div class="gui-icon"><i class="fa fa-truck"></i></div>
+                    <span class="title">Suppliers</span>
+                </a>
+
+                <ul>
+                    {% for s in suppliers %}
+                        <li {% if supplier.slug == s.slug %}class="active"{% endif %}>
+                            <a href="{{ s.get_absolute_url }}">{{ s.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+        <div class="menubar-foot-panel">
+            <small class="no-linebreak hidden-folded">
+                <span class="opacity-75">alfa</span> <strong>smth</strong>
+            </small>
+        </div>
+    </div>
+</div>

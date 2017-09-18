@@ -1,0 +1,175 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Product portfolios{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+
+<section>
+
+<div class="section-body contain-lg">
+	<div class="row table-row">
+		<div class="col-lg-6">
+			<div class="card card-underline">
+				<div class="card-head">
+					<header>Add a product portfolio</header>
+				</div>
+
+				<div class="card-body">
+					
+
+					<form class ="form" method="post" action="{% url "portfolios:portfolio_add" %}">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form">
+									{% csrf_token %}
+
+									{{ portfolio_form.name | add_class:'form-control' }}
+									{% if portfolio_form.portfolio_name.errors %}
+										{% for error in portfolio_form.portfolio_name.errors %}
+											{{ error|escape }}
+										{% endfor %}
+									{% endif %}
+									{{ portfolio_form.media }}
+									</br>
+									{{ portfolio_form.supplier | add_class:'form-control' }}
+									{% if portfolio_form.supplier.errors %}
+										{% for error in portfolio_form.supplier.errors %}
+											{{ error|escape }}
+										{% endfor %}
+									{% endif %}
+									<h4>Products</h4>
+									<select id='supplier-product-options' multiple='multiple'>
+									</select>
+									
+									<input type="hidden" name="selected_products" id="selected_products_hidden">
+									<!--<div class="table-responsive" id="product-formset" class="form">
+										<table class="table table-striped">
+											<tbody>
+												{% for product_form in product_formset.forms %}
+												<tr>
+													<td>{{ product_form.product | add_class:'form-control product-select' | attr:"id:product-select" }}</td>
+													<td>{{ product_form.quantity | add_class:'form-control' }}</td>
+													<td>{{ product_form.um | add_class:'form-control' }}</td>
+												</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+										{{ product_formset.management_form }}
+									</div> 
+
+									{% if product_formset.non_form_errors %}
+										{% for error in product_formset.non_form_errors %}
+											{{ error|escape }}
+										{% endfor %}
+									{% endif %}-->
+								</div>
+							</div>
+						</div>
+					    <div class="col-md-12">
+							<div class="card-actionbar-row">
+								<input type="submit" onclick="injectSelectedProducts()" value="Add portfolio" class="btn btn-primary stick-bottom-right"/>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-6">
+			<div class="card card-underline">
+				<div class="card-head">
+					<header>Product portfolio list</header>
+				</div>
+				<div class="card-body">
+					{% if portfolios %}
+						<div class="table-responsive">
+							<table class="table order-column">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Supplier</th>
+										<th>Estimated cost</th>
+										<th style="text-align:center">Order</th>
+										<th style="text-align:center">Delete</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for portfolio in portfolios %}
+										<tr class="gradeX">
+											<td><a href="{% url 'portfolios:portfolio_detail' portfolio.id %}">{{ portfolio.name }}</a></td>
+											<td>{{ portfolio.supplier }}</td>
+											<td>{{ portfolio.get_cost|floatformat:2 }}</td>
+											<td class="text-center">
+	
+													<form id="portfolio_order" action="{% url "portfolios:portfolio_order" %}" method="post">
+														{% csrf_token %}
+														<input type="hidden" name="portfolio_id" value={{ portfolio.id }}>
+														<button type="submit" class="btn btn-md btn-floating-action btn-primary">
+															<i class="fa fa-truck"></i>
+														</button>
+													</form>
+													
+											</td>
+											<td class="text-center">
+											<a href="{% url 'portfolios:portfolio_delete' portfolio.id %}" class="btn btn-floating-action btn-danger" onclick="return confirm('Are you sure you want to delete the portfolio?')"><i class="md md-delete"></i> </a>
+										</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					{% else %}
+						<h3>You have no portfolios defined!</h3>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</section>
+<script src="{% static 'js/libs/jquery/jquery.formset.js' %}"></script>
+
+<script src="{% static 'js/libs/multi-select/jquery.multi-select.js' %}"></script>
+<script type="text/javascript">
+	$('#supplier-product-options').multiSelect();
+</script>
+
+<script>
+function injectSelectedProducts() {
+	var text = $('#supplier-product-options').val();
+    $('#selected_products_hidden').val(text);
+}
+</script>
+
+
+<script type="text/javascript">
+	$(function() {
+		$('#product-formset tbody tr').formset({
+			addText:'<i class="fa fa-plus"></i>',
+			addCssClass:'btn btn-md btn-floating-action btn-primary',
+			deleteCssClass:'btn btn-floating-action btn-danger',
+       		deleteText: '<i class="md md-delete"></i>'
+		});
+	})
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('select[name=supplier]').change(function(){
+		supplier_id = $(this).val();
+		request_url = '/products/get-products/' + supplier_id + '/';
+		$.ajax({
+			url: request_url,
+			success: function(data){
+				$("#supplier-product-options").empty();
+				$.each(data, function(key, value){
+						$("#supplier-product-options").append('<option value="' + value.pk + '">' + value.fields.name +'</option>');
+					});
+				$('#supplier-product-options').multiSelect('refresh');
+			}
+		})
+	})
+});
+</script>
+{% endblock %}

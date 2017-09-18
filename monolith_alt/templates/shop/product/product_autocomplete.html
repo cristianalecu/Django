@@ -1,0 +1,10 @@
+{% load autocomplete_light_tags %}
+
+{% if choices %}
+    <h2>{% trans 'Please select a product' %}</h2>
+    {% for choice in choices %}
+        {{ choice|autocomplete_light_choice_html:autocomplete }}
+    {% endfor %}
+{% else %}
+    <h2>{% trans 'No matching product found' %}</h2>
+{% endif %}

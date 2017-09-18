@@ -1,0 +1,53 @@
+{% load static %}
+<header id="header" >
+    <div class="headerbar">
+        <div class="headerbar-left">
+            <ul class="header-nav header-nav-options">
+                <li class="header-nav-brand" >
+                    <div class="brand-holder">
+                        <a href="{% url 'shop:product_list' %}">
+                            <span class="text-lg text-light text-danger">Shoop</span><span class="text-lg text-bold text-primary"> in Shop</span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="headerbar-right">
+            <ul class="header-nav header-nav-options">
+                <li class="header-nav">
+                    {% with total_items=cart|length %} 
+                        {% if cart|length > 0 %} 
+                            <a href="{% url 'cart:cart_detail' %}">
+                                <span class="profile-info">
+                                    <h4 class="text-lg text-bold text-secondary">{{ total_items }} item{{ total_items|pluralize }}, ${{ cart.get_total_price|floatformat:"2" }}</h4>
+                                </span>
+                            </a>
+                        {% else %} 
+                            <span class="profile-info">
+                                <h4 class="text-lg text-bold text-secondary">Your cart is empty</h4>
+                            </span>
+                        {% endif %} 
+                    {% endwith %}
+                </li>
+            </ul>
+
+            <ul class="header-nav header-nav-profile">
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <img src="{% static "img/no_image.png" %}" alt="" title="" style="">
+                        <span class="profile-info">
+                            {{ user.get_username }}
+                            <small>{% if user.is_staff %}Staff{% else %}Regular user{% endif %}</small>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">Account</li>
+                        <li><a href="/admin">Settings</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url 'users:logout' %}?next=/"><i class="fa fa-fw fa-power-off text-danger"></i> Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>

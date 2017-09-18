@@ -1,0 +1,121 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Customers portfolio{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+
+<section>
+
+<div class="section-body contain-lg">
+	<div class="row table-row">
+		<div class="col-lg-4">
+			<div class="card card-underline">
+				<div class="card-head">
+					<header>Add a customer</header>
+				</div>
+
+				<div class="card-body">
+					<form class="form" method="post" action="{% url "users:customer_add" %}">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form">
+									{% for field in customer_form %}
+										{{ field | add_class:'form-control'}}
+										{{ field.errors }}
+									{% endfor %}
+									
+									{{ customer_form.non_field_errors }}		
+								</div>
+							</div>
+						</div>
+						{% csrf_token %}
+				
+						<div class="col-md-12">
+						</br></br>
+							<div class="card-actionbar-row">
+								<input type="submit" value="Add customer" class="btn btn-primary stick-bottom-right"/>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-8">
+			<div class="card card-underline">
+				<div class="card-head">
+					<header>Customer list</header>
+				</div>
+				<div class="card-body">
+					{% if customers %}
+						<div class="table-responsive">
+							<table class="table order-column hover">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Address</th>
+										<th>City</th>
+										<th>Phone</th>
+										<th>Email</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for customer in customers %}
+										<tr class="gradeX">
+											<td><a href="{% url 'users:customer_detail' customer.id %}">{{ customer.first_name|add:" "|add:customer.last_name }}</a></td>
+											<td>{{ customer.address }}</td>
+											<td>{{ customer.city }}</td>
+											<td>{{ customer.phone }}</td>
+											<td>{{ customer.email }}</td>
+											
+											<td class="text-center">
+											<a href="{% url 'users:customer_delete' customer.id %}" class="btn btn-floating-action btn-danger" onclick="return confirm('Are you sure you want to delete the customer?')"><i class="md md-delete"></i> </a>
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					{% else %}
+						<h3>You have no customers added!</h3>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</section>
+<script src="{% static 'js/libs/jquery/jquery.formset.js' %}"></script>
+<script type="text/javascript">
+	$(function() {
+		$('#product-formset tbody tr').formset({
+			addText:'<i class="fa fa-plus"></i>',
+			addCssClass:'btn btn-md btn-floating-action btn-primary',
+			deleteCssClass:'btn btn-floating-action btn-danger',
+			deleteText: '<i class="md md-delete"></i>'
+		});
+	})
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('select[name=supplier]').change(function(){
+		supplier_id = $(this).val();
+		request_url = '/products/get-products/' + supplier_id + '/';
+		$.ajax({
+			url: request_url,
+			success: function(data){
+				$("#product-formset").find('.product-select').each(function (j, element) {
+					$(element).find('option').remove();
+					$.each(data, function(key, value){
+						$(element).append('<option value="' + key + '">' + value +'</option>');
+					});
+				 });
+			}
+		})
+	})
+});
+</script>
+{% endblock %}

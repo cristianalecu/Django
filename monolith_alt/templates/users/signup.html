@@ -1,0 +1,36 @@
+{% extends 'shop/base.html' %} 
+{% block title %}Log in{% endblock %}
+{% block content %}
+<section>
+	<div class="section-body contain-lg">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="card card-underline">
+					<div class="card-head">
+						<header>Log in to Shop</header>
+					</div>
+		  			<!-- page header end -->
+		  			<div class="card-body">
+						<form method="post">
+							{% csrf_token %}
+							{% for field in form %}
+								<p>
+									{{ field.label_tag }}<br>
+									{{ field }}
+									{% if field.help_text %}
+										<small style="color: grey">{{ field.help_text|safe }}</small>
+									{% endif %}
+									{% for error in field.errors %}
+										<p style="color: red">{{ error }}</p>
+									{% endfor %}
+								</p>
+							{% endfor %}
+							<button type="submit">Sign up</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}

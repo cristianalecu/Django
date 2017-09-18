@@ -1,0 +1,46 @@
+{% load staticfiles %}
+
+<div class="contain-lg">
+    <div class="row">
+        <div class="col-lg-12">
+			<div class="card card-underline">
+				<div class="card-head">
+					<header>Your favorite products
+					</header>
+				</div>
+				<div class="card-body">
+					{% if not products %}
+						<h1>You have no favorite products, place some orders first!</h1>
+					{% else %}
+						<div class="row">
+							{% for product in products %}
+								<div class="col-md-3">
+				    				<div class="card">
+										<div class="card-head">
+											<header>{{ product.name }}<br>{{ product.price }}$
+											</header>
+											<div class="tools">
+												<form id="add_product" action="{% url "cart:cart_add" product.id %}" method="post">
+														{{ cart_product_form }}
+														{% csrf_token %}
+														<button type="submit" class="btn btn-danger">
+														  <i class="fa fa-cart-plus fa-2x"></i>
+														</button>
+												</form>
+											</div>
+										</div>
+										<div class="card-body text-default-light">
+											<a href="{{ product.get_absolute_url }}">
+												<img class="img-responsive" src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
+											</a>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

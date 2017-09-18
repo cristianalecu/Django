@@ -1,0 +1,49 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section>
+	{% if chart_qty or chart_amount %}
+		<div class="section-body contain-lg">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="card">
+						<div class="card-body">
+							<div id="qty-chart" class="flot height-6" data-title="Quantity" data-color="#0aa89e"></div>
+							<small>Different items ordered</small>
+							<!-- <em class="text-caption">Different items ordered</em> -->
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="card">
+						<div class="card-body">
+							<!-- <div id="amount-chart" class="height-5" data-colors="#9C27B0,#0aa89e"></div> -->
+							<div id="amount-chart" class="flot height-6" data-title="Amount" data-color="#9C27B0,#0aa89e"></div>
+							<small>Amount spent per order</small>
+						</div>
+					</div>
+				<!-- <em class="text-caption">wasd</em> -->
+				</div>
+			</div>
+		</div>
+	<script type="text/javascript">
+		$(document).ready(function(){ 
+
+			json_data_qty = {{chart_qty|safe}};
+			json_data_amount = {{chart_amount|safe}};
+
+			$.drawFlotChart("#qty-chart", json_data_qty);
+			$.drawFlotChart("#amount-chart", json_data_amount);
+			// $.drawMorrisAreaChart("#amount-chart", json_data_amount);
+		});
+	</script> 
+	{% endif %}
+
+	{% include 'orders/quick.html' %}
+	{% include 'orders/list_naked.html' %}
+	{% include 'shop/product/list_naked.html' %}
+</section>
+
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %} {% endblock %} | Shop</title>
+        <script src="{% static 'js/libs/jquery/jquery-3.2.1.min.js' %}"></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href='http://fonts.googleapis.com/css?family=Roboto:300italic,400italic,300,400,500,700,900' rel='stylesheet' type='text/css'/>
+        <link type="text/css" rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/materialadmin.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/material-design-iconic-font.min.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/libs/DataTables/jquery.dataTables.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/libs/DataTables/extensions/dataTables.colVis.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/libs/DataTables/extensions/dataTables.tableTools.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/print.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/libs/multi-select/multi-select.css' %}">
+    </head>
+
+    <body class="menubar-pin menubar-hoverable header-fixed">
+    
+    {% if user.is_authenticated %}
+        {% include 'shop/header.html' %}
+        {% include 'shop/menubar.html' %}
+    {% endif %}
+
+
+    <div id="base">
+        <div class="offcanvas">
+        </div>
+        <div id="content">
+            <div id="message_placeholder">
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %} class="alert {{ message.tags }} text-center alert-dismissable"{% endif %}>
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            </div>
+        </div>
+
+        {% block content %}
+        {% endblock %}
+    </div>        
+        <script src="{% static 'js/libs/bootstrap/bootstrap.js' %}"></script>
+        <script src="{% static 'js/libs/jquery-ui/jquery-ui.min.js' %}"></script>
+        <script src="{% static 'js/libs/nanoscroller/jquery.nanoscroller.min.js' %}"></script>
+        <script src="{% static 'js/libs/flot/jquery.flot.min.js' %}"></script>
+        <script src="{% static 'js/libs/raphael.min.js' %}"></script>
+        <script src="{% static 'js/libs/morris.js-0.5.1/morris.min.js' %}"></script>
+        
+        <!-- DATATABLE -->
+        <script src="{% static 'js/libs/DataTables/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'js/libs/DataTables/extensions/ColVis/js/dataTables.colVis.min.js' %}"></script>
+        <script src="{% static 'js/libs/DataTables/extensions/TableTools/js/dataTables.tableTools.min.js' %}"></script>
+
+        <script src="{% static 'js/core/App.js' %}"></script>
+        <script src="{% static 'js/core/AppNavigation.js' %}"></script>
+        <script src="{% static 'js/core/AppOffcanvas.js' %}"></script>
+        <script src="{% static 'js/core/AppCard.js' %}"></script>
+        <script src="{% static 'js/core/AppForm.js' %}"></script>
+        <script src="{% static 'js/core/AppVendor.js' %}"></script>
+        <script src="{% static 'js/core/Demo.js' %}"></script>
+        <script src="{% static 'js/core/DemoTableDynamic.js' %}"></script>
+        <script src="{% static 'js/core/DemoCharts.js' %}"></script>
+
+        {% block javascript %}
+        {% endblock %}
+    </body>
+</html>

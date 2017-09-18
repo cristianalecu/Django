@@ -1,0 +1,50 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block title %}Customer details{% endblock %}
+{% block content %}
+<section>
+	<div class="section-body contain-lg">
+		{% if customer %}
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="card card-underline">
+						<div class="card-head">
+							<header>{{ customer.first_name|add:" "|add:customer.last_name }} details</header>
+						</div>
+						<div class="card-body">
+							<ul>
+								<li>Address: {{ customer.address }}</li>
+								<li>City: {{ customer.city }}</li>
+								<li>Phone: {{ customer.phone }}</li>
+								<li>Email: {{ customer.email }}</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-lg-8">
+					{% include 'orders/list_naked.html' %}
+				</div>
+				{% if chart_amount %}
+						<div class="col-lg-4">
+							<div class="card">
+								<div class="card-body">
+									<div id="amount-chart" class="flot height-6" data-title="Amount" data-color="#9C27B0,#0aa89e"></div>
+									<small>Amount spent per order</small>
+								</div>
+							</div>
+						</div>
+					<script type="text/javascript">
+						$(document).ready(function(){ 
+							json_data_amount = {{chart_amount|safe}};
+
+							$.drawFlotChart("#amount-chart", json_data_amount);
+						});
+					</script> 
+				{% endif %}
+
+			</div>
+		{% endif %}
+	</div>
+</section>
+{% endblock %}

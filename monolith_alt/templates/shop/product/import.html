@@ -1,0 +1,77 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block title %}Import{% endblock %}
+
+{% block content %}
+<section>
+	<div class="section-body contain-lg">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="card card-underline">
+					<div class="card-head">
+						<header>Import a product list</header>
+					</div>
+					<div class="card-body">
+						<form method="post" enctype="multipart/form-data">
+							{% csrf_token %}
+							<row>
+							<label class="btn btn-primary" for="my-file-selector">
+								<input id="my-file-selector" name="products_file" type="file" style="display:none" 
+								onchange="$('#upload-file-info').html(this.files[0].name)">Browse</label>
+							<button type="submit" class="btn btn-default">Import</button>
+							<span class='label label-warning' id="upload-file-info"></span>
+							</row>
+						  </form>
+					</div>
+				</div>
+			</div>
+			{% if result %}
+				{% if result.error %}
+					<div class="col-lg-12">
+						<div class="card card-underline">
+							<div class="card-head">
+								<header>{{ result.error }}</header>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% else %}
+					<div class="col-lg-12">
+						<div class="card card-underline">
+							<div class="card-head">
+								<header>{{ result.message }}</header>
+							</div>
+							<div class="card-body">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Id</th>
+											<th>Category</th>
+											<th>Product name</th>
+											<th>Product description</th>
+											<th>Supplier</th>
+											<th>Price</th>
+											<th>Stock</th>
+										</tr>
+									</thead>
+										{% for product in result.items %}
+											<tr>
+												<td>{{ product.id }}</td>
+												<td>{{ product.category.name }}</td>
+												<td>{{ product.name }}</td>
+												<td>{{ product.description }}</td>
+												<td>{{ product.supplier.name }}</td>
+												<td>{{ product.price }}</td>
+												<td>{{ product.stock }}</td>
+											</tr>
+										{% endfor %}
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+		{% endif %}
+	</div>
+</section>
+{% endblock %}

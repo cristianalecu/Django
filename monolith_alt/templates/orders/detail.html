@@ -1,0 +1,102 @@
+{% extends 'shop/base.html' %} 
+{% block title %}Order{% endblock %} 
+{% block content %}
+<section>
+	<div class="section-body contain-lg">
+   	    <div class="row">
+	        <div class="col-lg-12">
+				<div class="card card-printable style-default-light">
+					<div class="card-head">
+						<div class="tools">
+							<div class="btn-group">
+								<a class="btn btn-floating-action btn-warning" href="{% url 'orders:order_single_export' order.id %}" ><i class="fa fa-file-excel-o" aria-hidden="true"></i></a>
+								<a class="btn btn-floating-action btn-primary" href="javascript:void(0);" onclick="javascript:window.print();"><i class="md md-print"></i></a>
+							</div>
+						</div>
+					</div>
+					
+					<div class="card-body style-default-bright" id="print">
+						<div class="row">
+							<div class="col-xs-8">
+								<h1 class="text-light" style="margin-top: 0px; color: #f70b0b">ORDER <strong class="text-accent-dark" style="color: #1ab394">{{ order.id }}</strong></h1>
+								<p>PSS Prosoft Solutions<br>Brasov</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<h1 class="text-light text-default-light">Invoice</h1>
+							</div>
+						</div>
+						<br/>
+
+						<div class="row">
+							<div class="col-xs-8">
+								<h4 class="text-light">Customer:</h4>
+								<address>
+									<strong>{{ order.first_name|add:" "|add:order.last_name}}</strong><br>
+									{{ order.address}}
+									<br><b>City: </b>{{ order.city }}
+								</address>
+							</div>
+							<div class="col-xs-4">
+								<div class="well">
+									<div class="clearfix">
+										<div class="pull-left">Order no:</div>
+										<div class="pull-right">{{ order.id }}</div>
+									</div>
+									<div class="clearfix">
+										<div class="pull-left">Order date:</div>
+										<div class="pull-right">{{ order.created }}</div>
+									</div>
+									<div class="clearfix">
+										<div class="pull-left">To be delivered:</div>
+										<div class="pull-right">tomorrow</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<br/>
+
+						<div class="row">
+							<div class="col-md-12">
+								<table class="table">
+									<thead>
+										<tr>
+											<th style="width:60px" class="text-center">ID</th>
+											<th class="text-left">DESCRIPTION</th>
+											<th style="width:140px" class="text-right">QTY</th>
+											<th style="width:90px" class="text-right">TOTAL</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for product in products %}
+											<tr>
+												<td>{{ product.product.id }}</td>
+												<td class="text-left">{{ product.product.name }}</td>
+												<td class="text-right">{{ product.quantity }}</td>
+												<td class="text-right">{{ product.get_cost|floatformat:2 }}</td>
+											</tr>
+										{% endfor %}
+											<tr>
+												<td colspan="2" rowspan="4">
+													<h3 class="text-light opacity-50">Notes</h3>
+													<p><small>In ciuda a ceea ce este prevazut in noul program de guvernare, Liviu Dragnea a spus ca in program este prevazut un nivel al salariului minim de 1.550 lei in 2018, de 1.650 lei in 2019 si de 1.750 in 2020. Salariul minim brut va creste in 2018 la 2.000 de lei, iar pentru angajatii cu studii superioare va fi de 2.300 de lei, se arata in programul de guvernare al guvernului Tudose depus in Parlament.</small></p>
+													<p><strong><em>Recvied By __________________</em></strong></p>
+												</td>
+												<td class="text-right"><strong>Subtotal</strong></td>
+												<td class="text-right">{{ order.get_total_cost|floatformat:2 }}</td>
+											</tr>
+											<tr>
+												<td class="text-right"><strong class="text-lg text-accent">Total</strong></td>
+												<td class="text-right"><strong class="text-lg text-accent">{{ order.get_total_cost|floatformat:2 }}</strong></td>
+											</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+{% endblock %}

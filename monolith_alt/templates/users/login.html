@@ -1,0 +1,92 @@
+{% load staticfiles %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login | Shop</title>
+        <script src="{% static 'js/libs/jquery/jquery-3.2.1.min.js' %}"></script>
+        <!-- meta start-->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- meta end -->
+
+        <!-- stylesheets start -->
+        <link href='http://fonts.googleapis.com/css?family=Roboto:300italic,400italic,300,400,500,700,900' rel='stylesheet' type='text/css'/>
+        <link type="text/css" rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/materialadmin.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/material-design-iconic-font.min.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/libs/DataTables/jquery.dataTables.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/libs/DataTables/extensions/dataTables.colVis.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/libs/DataTables/extensions/dataTables.tableTools.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/print.css' %}" />
+        <!-- stylesheets end -->
+    </head>
+    <body>
+        <section >
+            <div class="card contain-sm style-transparent" style="max-width:500px">
+                <div class="card-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="text-lg text-bold text-primary">Supplier login</span>
+                            <br/><br/>
+                            <form class="form floating-label" action="{% url 'login' %}" accept-charset="utf-8" method="post">
+                                {% csrf_token %}
+                                {% if form.errors %}
+                                    <div class="alert alert-danger">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>Error!</strong> Your username and password didn't match. Please try again.
+                                    </div>
+                                {% endif %}
+                                <div class="form-group">
+                                    {{ form.username|add_class:"form-control" }}
+                                    <label for="username">Username</label>
+                                </div>
+                                <div class="form-group">
+                                    {{ form.password|add_class:"form-control" }}
+                                    <label for="password">Password</label>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-xs-6 text-right">
+                                        <button class="btn btn-primary btn-raised" type="submit">Login</button>
+                                    </div>
+                                    <div class="col-xs-6 text-left">
+                                        <a class="btn btn-primary"  href="{% url 'users:signup' %}">No account? Sign up</a>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="next" value="{{ next }}" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script src="{% static 'js/libs/bootstrap/bootstrap.js' %}"></script>
+        <script src="{% static 'js/libs/nanoscroller/jquery.nanoscroller.min.js' %}"></script>
+        <script src="{% static 'js/libs/flot/jquery.flot.min.js' %}"></script>
+        <script src="{% static 'js/libs/raphael.min.js' %}"></script>
+        <script src="{% static 'js/libs/morris.js-0.5.1/morris.min.js' %}"></script>
+        
+        <!-- DATATABLE -->
+        <script src="{% static 'js/libs/DataTables/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'js/libs/DataTables/extensions/ColVis/js/dataTables.colVis.min.js' %}"></script>
+        <script src="{% static 'js/libs/DataTables/extensions/TableTools/js/dataTables.tableTools.min.js' %}"></script>
+
+        <script src="{% static 'js/core/App.js' %}"></script>
+        <script src="{% static 'js/core/AppNavigation.js' %}"></script>
+        <script src="{% static 'js/core/AppOffcanvas.js' %}"></script>
+        <script src="{% static 'js/core/AppCard.js' %}"></script>
+        <script src="{% static 'js/core/AppForm.js' %}"></script>
+        <script src="{% static 'js/core/AppVendor.js' %}"></script>
+        <script src="{% static 'js/core/Demo.js' %}"></script>
+        <script src="{% static 'js/core/DemoTableDynamic.js' %}"></script>
+        <script src="{% static 'js/core/DemoCharts.js' %}"></script>
+
+        <!-- END JAVASCRIPT -->
+
+        {% block javascript %}
+        {% endblock %}
+    </body>
+</html>
