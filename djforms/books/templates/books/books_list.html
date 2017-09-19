@@ -1,0 +1,20 @@
+{% extends 'books/base.html' %}
+
+{% block header %}
+<h1><a href="/">My Books</a></h1>
+{% if user.is_authenticated %}
+    <a href="{% url 'book_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+    {% for obj in objs %}
+        <div class="book">
+            <div class="date">
+                {{ obj.due_date }}
+            </div>
+            <h1><a href="{% url 'book_detail' pk=obj.pk %}">{{ obj.name }}</a></h1>
+            <p>{{ obj.text|linebreaksbr }}</p>
+        </div>
+    {% endfor %}
+{% endblock %}
