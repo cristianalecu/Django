@@ -3,8 +3,11 @@ from .models import Author, Book
 from .forms import AuthorForm, BookForm
 from django.shortcuts import redirect
 
+from django.forms import modelformset_factory
+from _overlapped import NULL
+
 def books_list(request):
-    objs = Book.objects.all()
+    objs = Book.objects.filter(user=request.user)
     return render(request, 'books/books_list.html', {'objs': objs})
 
 def book_detail(request, pk):
@@ -20,7 +23,7 @@ def book_new(request):
             obj.save()
             return redirect('book_detail', pk=obj.pk)
     else:
-        form = BookForm()
+        form = BookForm(initial={'due_date': '2000-01-01'})
     return render(request, 'books/book_edit.html', {'form': form})
 
 def book_edit(request, pk):
@@ -42,7 +45,7 @@ def book_delete(request, pk):
     return redirect('books_list')
 
 def authors_list(request):
-    objs = Author.objects.all()
+    objs = Author.objects.filter(user=request.user)
     return render(request, 'books/authors_list.html', {'objs': objs})
 
 def author_detail(request, pk):
@@ -59,7 +62,7 @@ def author_new(request):
             return redirect('author_detail', pk=obj.pk)
     else:
         form = AuthorForm()
-    return render(request, 'books/author_edit.html', {'form': form})
+    return render(request, 'books/author_edit.html', {'form': form, 'formset': NULL})
 
 def author_edit(request, pk):
     obj = get_object_or_404(Author, pk=pk)
@@ -72,7 +75,9 @@ def author_edit(request, pk):
             return redirect('author_detail', pk=obj.pk)
     else:
         form = AuthorForm(instance=obj)
-    return render(request, 'books/author_edit.html', {'form': form})
+    BooksFormSet = modelformset_factory(Book, fields=('name', 'due_date'))
+    formset = BooksFormSet(queryset=Book.objects.filter(author=obj))
+    return render(request, 'books/author_edit.html', {'form': form, 'formset': formset})
 
 def author_delete(request, pk):
     obj = get_object_or_404(Author, pk=pk)

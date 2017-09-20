@@ -14,8 +14,10 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth import views as auth
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'', include('books.urls')),                     #NewBooks A
-]
+    url(r'^login/$', auth.login, {'template_name': 'books/login.html'}, name='login'),
+    url(r'^logout/$', auth.logout, {'next_page': '/'}, name='logout'),]
