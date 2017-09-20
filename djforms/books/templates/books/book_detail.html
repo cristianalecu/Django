@@ -15,10 +15,10 @@
             </div>
         {% endif %}
         {% if user.is_authenticated %}
-                <a class="btn btn-default" href="{% url 'book_edit' pk=obj.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
-                <a class="btn btn-default" href="{% url 'book_delete' pk=obj.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+                <a class="btn btn-default" href="{% url 'book_edit' pk=objs.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a class="btn btn-default" href="{% url 'book_delete' pk=objs.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
         {% endif %}
-        <h1>{{ objs.title }}</h1>
-        <p>{{ objs.text|linebreaksbr }}</p>
+        <h1>{{ objs.name }}</h1>
+        <p>{{ objs.author|linebreaksbr }}</p>
     </div>
 {% endblock %}
