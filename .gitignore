@@ -43,3 +43,4 @@ DjangoByExample/myblog/db.sqlite3
 DjangoByExample/myshop/db.sqlite3
 
 pss_cloud_orders
+djforms/db.sqlite3
