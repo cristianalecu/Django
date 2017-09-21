@@ -1,0 +1,88 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Customers portfolio{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+
+<script type="text/javascript">
+var empty_form = "";
+var empty_row = "";
+var table_rows = 0;
+ 
+function add_row()
+{
+	var max = parseInt(document.getElementById("id_form-TOTAL_FORMS").value);
+	var xform = 'form-'+max;
+	max++;
+	document.getElementById("id_form-TOTAL_FORMS").setAttribute('value', ''+max);
+	append = empty_row.split(empty_form).join(xform);  // replace(empty_form, xform) don't replace all
+	$("#sheet-"+empty_form).after(append);
+}
+function hide_row(idx)
+{
+	idx_val = parseInt(idx.substr(5));
+	append = '<input type="hidden" name="' + idx + '-DELETE" value="1" id="id_' + idx + '-DELETE">';
+	$("#sheet-"+idx).before(append);
+	$("#sheet-"+idx).hide();
+}
+</script>
+
+<section>
+<div class="section-body contain-lg"  style=" max-width: 1400px; width: 1400px">
+	<div class="row table-row">
+		<div >
+			<div class="card card-underline">
+				<div class="card-head">
+					<header>My customers</header>
+				</div>
+
+				<div class="card-body">
+					<form class="form" method="post" action="{% url "users:customer_sheet" %}">
+					  {% csrf_token %}
+					  {{ formset.management_form }}
+					  <table class="table">
+					    {% for form in formset %}
+					      {% if form.prefix == 'form-0' %}
+						    <thead>
+						      <tr>
+						        {% for field in form %}
+						        {% if field.label != 'Id' %}
+						        <th>{{ field.label }}</th>
+						        {% endif %}
+						        {% endfor %}
+						      </tr>
+						    </thead>
+					      {% endif %}
+					      <tbody>
+					      {{ form.id }}
+					      <tr id="sheet-{{form.prefix}}">
+					      	{% for field in form %}
+					      	{% if field.label != 'Id' %}
+					        <td> {{ field }} </td>
+					        {% endif %}
+					      	{% endfor %}
+					      </tr>
+					    {% endfor %}
+					    </tbody>
+                      </table>
+                      <p class="stick-bottom-right"><a href="#" class="btn btn-info" role="button" onclick="add_row(); return false;">+</a>
+					  <input type="submit" value="Save" class="btn btn-primary"/></p>
+					  {% for error in formset.errors %}
+					        {{ error }}<br/>
+					  {% endfor %}
+					  {{ formset.non_form_errors }}
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</section>
+<script type="text/javascript">
+	$(function() {
+		table_rows = parseInt(document.getElementById("id_form-TOTAL_FORMS").value);
+		empty_form = "form-"+(table_rows-1);
+		empty_row = document.getElementById("sheet-"+empty_form).outerHTML;
+	})
+</script>
+{% endblock %}

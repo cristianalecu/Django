@@ -7,12 +7,12 @@ from django.core import serializers
 from dal import autocomplete
 from tablib import Dataset
 
-
+from django.forms import modelformset_factory
 from orders.views import get_orders_of_user, get_chart_ordered_amounts
 from shop.models import Product
 
 from .forms import SignUpForm, CustomerForm
-from .models import Customer
+from .models import Customer, Profile
 from .resources import CustomerResource
 
 def signup(request):
@@ -66,23 +66,43 @@ def customer_list(request):
 	return render(request, 'users/customer/list.html', context)
 
 def customer_sheet(request):
-	if request.user.is_authenticated:
-		customers = Customer.objects.filter(user=request.user)
-		customer_form = CustomerForm()
-		from_add = request.session.pop('from_add', False)
-		if from_add:
-			customer_form.initial['first_name'] = request.session.pop('first_name', "")
-			customer_form.initial['last_name'] = request.session.pop('last_name', "")
-			customer_form.initial['address'] = request.session.pop('address', "")
-			customer_form.initial['city'] = request.session.pop('city', "")
-			customer_form.initial['phone'] = request.session.pop('phone', "")
-			customer_form.initial['email'] = request.session.pop('email', "")
+	CustomersFormSet = modelformset_factory(
+		 Customer, 
+		 fields=('first_name','last_name','address','city','phone','email'), 
+		 can_delete=True,
+		 can_order=True,
+		 extra=1)
+	if not request.user.is_authenticated:
+		return redirect('users:login')
 		
-	context = {
-		'customers': customers,
-		'customer_form': customer_form,
-	}
-	return render(request, 'users/customer/list.html', context)
+	if request.method == "POST":
+		formset = CustomersFormSet(request.POST)
+		if formset.is_valid() :
+			instances = formset.save(commit=False)
+			for instance in instances:
+				instance.user = request.user
+				
+				if instance.profile_id:
+					instance.profile.user = request.user
+					instance.profile.user_type = 2   #Customer
+					instance.profile.address = instance.address
+					instance.profile.phone = instance.phone
+					instance.profile.save()
+				else :
+					pro =get_object_or_404(Profile, pk=request.user.id)
+					if not pro:
+						pro = Profile.objects.create(user=request.user, user_type=2, address= instance.address, phone= instance.phone, created='2010-01-01')
+						pro.save()
+					instance.profile = pro
+					instance.profile.save()
+					instance.profile_id = instance.profile.id
+				instance.save()
+			formset.save()   # commit
+			return redirect('users:customer_sheet')
+	else:
+		formset = CustomersFormSet(queryset=Customer.objects.filter(user=request.user))
+	 
+	return render(request, 'users/customer/sheet.html', {'formset': formset})
 
 
 def customer_detail(request, id):
