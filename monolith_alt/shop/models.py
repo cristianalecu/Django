@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from users.models import Profile
+from django.contrib.auth.models import User
 
 class Category(models.Model):
 	name = models.CharField(max_length=200, db_index=True)
@@ -18,6 +19,7 @@ class Category(models.Model):
 		return reverse('shop:product_list_by_criteria', args=[self.slug])
 
 class Supplier(models.Model):
+	user = models.ForeignKey(User, blank=True, null=True)
 	name = models.CharField(max_length=100, db_index=True)
 	address = models.CharField(max_length=200, db_index=True)
 	slug = models.SlugField(max_length=200, db_index=True, unique=True)

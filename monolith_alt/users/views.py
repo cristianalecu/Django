@@ -65,6 +65,26 @@ def customer_list(request):
 	}
 	return render(request, 'users/customer/list.html', context)
 
+def customer_sheet(request):
+	if request.user.is_authenticated:
+		customers = Customer.objects.filter(user=request.user)
+		customer_form = CustomerForm()
+		from_add = request.session.pop('from_add', False)
+		if from_add:
+			customer_form.initial['first_name'] = request.session.pop('first_name', "")
+			customer_form.initial['last_name'] = request.session.pop('last_name', "")
+			customer_form.initial['address'] = request.session.pop('address', "")
+			customer_form.initial['city'] = request.session.pop('city', "")
+			customer_form.initial['phone'] = request.session.pop('phone', "")
+			customer_form.initial['email'] = request.session.pop('email', "")
+		
+	context = {
+		'customers': customers,
+		'customer_form': customer_form,
+	}
+	return render(request, 'users/customer/list.html', context)
+
+
 def customer_detail(request, id):
 	customer = None
 

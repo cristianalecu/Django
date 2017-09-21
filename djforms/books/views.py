@@ -23,6 +23,8 @@ def book_new(request):
             return redirect('book_detail', pk=obj.pk)
     else:
         form = BookForm(initial={'due_date': '2000-01-01'})
+    
+    form.fields['author'].queryset = Author.objects.filter(user=request.user)
     return render(request, 'books/book_edit.html', {'form': form})
 
 def book_edit(request, pk):
@@ -36,6 +38,8 @@ def book_edit(request, pk):
             return redirect('book_detail', pk=obj.pk)
     else:
         form = BookForm(instance=obj)
+        
+    form.fields['author'].queryset = Author.objects.filter(user=request.user)
     return render(request, 'books/book_edit.html', {'form': form})
 
 def book_delete(request, pk):
