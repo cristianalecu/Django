@@ -3,8 +3,7 @@ from .models import Author, Book
 from .forms import AuthorForm, BookForm
 from django.shortcuts import redirect
 
-from django.forms import modelformset_factory
-from _overlapped import NULL
+from django.forms import modelformset_factory, inlineformset_factory
 
 def books_list(request):
     objs = Book.objects.filter(user=request.user)
@@ -49,33 +48,50 @@ def authors_list(request):
     return render(request, 'books/authors_list.html', {'objs': objs})
 
 def author_detail(request, pk):
-    objs = get_object_or_404(Author, pk=pk)
-    return render(request, 'books/author_detail.html', {'objs': objs})
+    obj = get_object_or_404(Author, pk=pk)
+    instances = Book.objects.filter(user=obj.user, author=obj)
+    return render(request, 'books/author_detail.html', {'objs': obj, 'instances': instances})
 
 def author_new(request):
+    BooksFormSet = modelformset_factory(Book, fields=('name', 'due_date'), max_num=10, extra=2)
     if request.method == "POST":
         form = AuthorForm(request.POST)
-        if form.is_valid():
+        formset = BooksFormSet(request.POST, request.FILES)
+        if form.is_valid() and formset.is_valid() :
             obj = form.save(commit=False)
             obj.user = request.user
             obj.save()
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.user = request.user
+                instance.author = obj
+                instance.save()
             return redirect('author_detail', pk=obj.pk)
     else:
         form = AuthorForm()
-    return render(request, 'books/author_edit.html', {'form': form, 'formset': NULL})
-
+        formset = BooksFormSet(queryset=Book.objects.none())
+     
+    return render(request, 'books/author_edit.html', {'form': form, 'formset': formset})
+ 
 def author_edit(request, pk):
     obj = get_object_or_404(Author, pk=pk)
+    BooksFormSet = modelformset_factory(Book, fields=('name', 'due_date'), max_num=10, extra=2)
     if request.method == "POST":
         form = AuthorForm(request.POST, instance=obj)
-        if form.is_valid():
+        formset = BooksFormSet(request.POST, request.FILES, queryset=Book.objects.filter(author=obj))
+        if form.is_valid() and formset.is_valid() :
             obj = form.save(commit=False)
             obj.user = request.user
             obj.save()
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.user = request.user
+                instance.author = obj
+                instance.save()
             return redirect('author_detail', pk=obj.pk)
     else:
         form = AuthorForm(instance=obj)
-    BooksFormSet = modelformset_factory(Book, fields=('name', 'due_date'))
+     
     formset = BooksFormSet(queryset=Book.objects.filter(author=obj))
     return render(request, 'books/author_edit.html', {'form': form, 'formset': formset})
 

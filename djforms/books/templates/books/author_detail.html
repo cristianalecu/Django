@@ -20,5 +20,12 @@
         {% endif %}
         <h1>{{ objs.title }}</h1>
         <p>{{ objs.name|linebreaksbr }}</p>
+        <h1>Books</h1>
+        {% for instance in instances %}
+        <div class="book">
+            <p><a href="{% url 'book_detail' pk=instance.pk %}">{{ instance.name }}</a>
+            {{ instance.due_date }}</p><br>
+        </div>
+        {% endfor %}
     </div>
 {% endblock %}

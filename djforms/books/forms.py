@@ -1,4 +1,4 @@
-from django.forms import ModelForm, Textarea, DateInput, BaseModelFormSet
+from django.forms import ModelForm, Textarea, DateInput, BaseModelFormSet, BaseInlineFormSet
 from .models import  Author, Book
 
 class AuthorForm(ModelForm):
@@ -29,3 +29,11 @@ class BaseBookFormSet(BaseModelFormSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.queryset = Book.objects.filter(name__startswith='O')
+        
+class CustomInlineFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        # example custom validation across forms in the formset
+        for form in self.forms:
+            # your custom formset validation
+            pass
