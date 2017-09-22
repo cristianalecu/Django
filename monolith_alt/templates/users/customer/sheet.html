@@ -33,11 +33,11 @@ function hide_row(idx)
 		<div >
 			<div class="card card-underline">
 				<div class="card-head">
-					<header>My customers</header>
+					<header>{{ title }}</header>
 				</div>
 
 				<div class="card-body">
-					<form class="form" method="post" action="{% url "users:customer_sheet" %}">
+					<form class="form" method="post">
 					  {% csrf_token %}
 					  {{ formset.management_form }}
 					  <table class="table">

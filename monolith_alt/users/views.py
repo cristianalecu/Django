@@ -9,11 +9,12 @@ from tablib import Dataset
 
 from django.forms import modelformset_factory
 from orders.views import get_orders_of_user, get_chart_ordered_amounts
-from shop.models import Product
+from shop.models import Product, Supplier
 
 from .forms import SignUpForm, CustomerForm
 from .models import Customer, Profile
 from .resources import CustomerResource
+from django.template.defaultfilters import slugify
 
 def signup(request):
 	if request.method == 'POST':
@@ -102,8 +103,32 @@ def customer_sheet(request):
 	else:
 		formset = CustomersFormSet(queryset=Customer.objects.filter(user=request.user))
 	 
-	return render(request, 'users/customer/sheet.html', {'formset': formset})
+	return render(request, 'users/customer/sheet.html', {'title': 'My Customers', 'formset': formset})
 
+def supplier_sheet(request):
+	SuppliersFormSet = modelformset_factory(
+		 Supplier, 
+		 fields=('name','address'), 
+		 can_delete=True,
+		 can_order=True,
+		 extra=1)
+	if not request.user.is_authenticated:
+		return redirect('users:login')
+		
+	if request.method == "POST":
+		formset = SuppliersFormSet(request.POST)
+		if formset.is_valid() :
+			instances = formset.save(commit=False)
+			for instance in instances:
+				instance.user = request.user
+				instance.slug = slugify(instance.name)
+				instance.save()
+			formset.save()   # commit
+			return redirect('users:supplier_sheet')
+	else:
+		formset = SuppliersFormSet(queryset=Supplier.objects.filter(user=request.user))
+	 
+	return render(request, 'users/customer/sheet.html', {'title': 'My Suppliers', 'formset': formset}, )
 
 def customer_detail(request, id):
 	customer = None

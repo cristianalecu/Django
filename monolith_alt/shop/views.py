@@ -17,6 +17,7 @@ from users.views import get_favorite_products
 from .models import Category, Product, Supplier
 from .resources import ProductResource
 from users.models import Customer
+from orders.models import SupplierOrder
 
 def product_list(request, criteria_slug=None):
 	category = None
@@ -35,7 +36,7 @@ def product_list(request, criteria_slug=None):
 			products = products.filter(supplier=supplier)
 			return render(request, 'shop/product/list.html', {'supplier': supplier, 'products': products})
 		except Supplier.DoesNotExist:
-			raise Http404("No categories or suppliers match the given query.")
+			pass
 			
 	return render(request, 'shop/product/list.html', {'category': category, 'products': products})
 
@@ -147,3 +148,8 @@ class SupplierAutocomplete(autocomplete.Select2QuerySetView):
 			qs = qs.filter(name__istartswith=self.q)
 
 		return qs
+	
+def mySupplierOrders(request):
+	orders = SupplierOrder.objects.filter(user=request.user)
+	return render(request, 'shop/orders.html', {'orders': orders})
+
