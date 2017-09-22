@@ -1,6 +1,6 @@
 from django import forms
 from shop.models import Product, Supplier, UnitMeasure
-from .models import PortfolioProduct, Portfolio
+from .models import PortfolioProduct, Portfolio, CustomerPortfolio
 from dal import autocomplete
 
 
@@ -32,3 +32,18 @@ class ProductForm(forms.Form):
 	class Meta:
 		model = PortfolioProduct
 		fields = ['product', 'quantity', 'um',]
+		
+class CustomerPortfolioForm(forms.ModelForm):
+    class Meta:
+        model = CustomerPortfolio
+        fields = ['name', 'supplier', 'customer']
+        labels = {
+            'name': 'Name',
+            'supplier': 'Supplier',
+            'customer': 'Customer',
+        }
+        help_texts = {
+            'name': 'Portfolio Name.',
+            'supplier': 'Portfolio Supplier from my Suppliers list',
+            'customer': 'Portfolio Customer from my Customers list',
+        }

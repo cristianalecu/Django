@@ -150,6 +150,6 @@ class SupplierAutocomplete(autocomplete.Select2QuerySetView):
 		return qs
 	
 def mySupplierOrders(request):
-	orders = SupplierOrder.objects.filter(user=request.user)
-	return render(request, 'shop/orders.html', {'orders': orders})
+	objs = SupplierOrder.objects.filter(user=request.user)
+	return render(request, 'shop/sheet.html', {'objs': objs})
 

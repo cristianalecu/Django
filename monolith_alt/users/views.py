@@ -103,7 +103,7 @@ def customer_sheet(request):
 	else:
 		formset = CustomersFormSet(queryset=Customer.objects.filter(user=request.user))
 	 
-	return render(request, 'users/customer/sheet.html', {'title': 'My Customers', 'formset': formset})
+	return render(request, 'shop/formset_edit.html', {'title': 'My Customers', 'formset': formset})
 
 def supplier_sheet(request):
 	SuppliersFormSet = modelformset_factory(
@@ -128,7 +128,7 @@ def supplier_sheet(request):
 	else:
 		formset = SuppliersFormSet(queryset=Supplier.objects.filter(user=request.user))
 	 
-	return render(request, 'users/customer/sheet.html', {'title': 'My Suppliers', 'formset': formset}, )
+	return render(request, 'shop/formset_edit.html', {'title': 'My Suppliers', 'formset': formset}, )
 
 def customer_detail(request, id):
 	customer = None
