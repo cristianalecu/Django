@@ -80,9 +80,14 @@ def dashboard(request):
 
 	return render(request, 'shop/dashboard.html', {'orders': orders, 'search_form': CartAddProductForm, 'cart': cart, 'quick_submit_form':quick_submit_form})#, {'orders': orders, 'products':favorites, 'chart_qty':chart_qty, 'chart_amount':chart_amount})
 
-def get_products(self, supplier_id):
-	products = Product.objects.filter(supplier=supplier_id)
+def get_supplier_products(self, pk):
+	products = Product.objects.filter(supplier_id=pk)
 	return HttpResponse(serializers.serialize('json',products), content_type="application/json")
+
+def get_product_details(self, pk):
+	product = Product.objects.filter(pk=pk)
+	return HttpResponse(serializers.serialize('json',product), content_type="application/json")
+
 
 def product_import(request):
 	context = {}

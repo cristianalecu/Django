@@ -48,6 +48,9 @@ function hide_row(idx)
 											{% endif %}
 											{{ field.errors }}
 										{% endfor %}
+										{% if not formset %}
+										<p class="stick-bottom-right"><input type="submit" value="Save" class="btn btn-primary"/></p>
+										{% endif %}
 										{{ form.non_field_errors }}		
 									</div>
 								</div>
@@ -57,6 +60,7 @@ function hide_row(idx)
 			</div>
 		</div>
 
+{% if formset %}
 <div class="contain-lg" style="max-width: 1400px;">
 	<div class="row">
 		<div class="col-lg-12">
@@ -126,8 +130,6 @@ function hide_row(idx)
                       </table>
                       <p class="stick-bottom-right"><a href="#" class="btn btn-info" role="button" onclick="add_row(); return false;">+</a>
 					  <input type="submit" value="Save" class="btn btn-primary"/></p>
-
-
 					  {% for error in formset.errors %}
 					        {{ error }}<br/>
 					  {% endfor %}
@@ -138,6 +140,7 @@ function hide_row(idx)
 		</div>
 	</div>
 </div>
+{% endif %}
 </form>
 </section><script type="text/javascript">
 var customer_id=-1;
@@ -148,20 +151,40 @@ $(document).ready(function(){
 	empty_form = "form-"+(table_rows-1);
 	empty_row = document.getElementById("sheet-"+empty_form).outerHTML;
 	
+	customer_id = $('select[name=customer]').val();
+	supplier_id = $('select[name=supplier]').val();
+	
 	function change_portfolio_products()
 	{
-		if(supplier_id > -1 && customer_id > -1)
+		if(supplier_id.length > 0 && customer_id.length > -1)
 		{
-			request_url = '/users/get-portfolio' + customer_id + '/' + supplier_id + '/';
+			//request_url = '/portfolios/get-portfolio/' + customer_id + '/' + supplier_id + '/';
+			//$.ajax({
+			//	url: request_url,
+			//	success: function(data){
+			//		var count = data.length;
+			//		
+			//	}
+			//})
+		}
+	}
+	
+	$('select').change(function(){
+		var combo = $(this);
+		if(combo[0].id.startsWith('id_form-') && combo[0].id.endsWith('-product'))
+		{
+			var form_id = parseInt(combo[0].id.substr(8));
+			var prod_id = $(this).val();
+			var request_url = '/shop/get_product_details/' + prod_id + '/';
 			$.ajax({
 				url: request_url,
 				success: function(data){
-					var count = data.length;
-					
+					$('#id_form-'+form_id+'-price').val(data[0].fields.price);
+					$('#id_form-'+form_id+'-um').val(data[0].fields.um);
 				}
 			})
 		}
-	}
+	})
 	
 	$('select[name=customer]').change(function(){
 		customer_id = $(this).val();
