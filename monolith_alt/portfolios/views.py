@@ -87,12 +87,15 @@ def portfolio_order(request):
 	return redirect('dashboard')
 
 def customer_portfolio_list(request):
+	if not request.user.is_authenticated:
+		return redirect('users:login')
 	objs = CustomerPortfolio.objects.filter(user=request.user)
 	args = {
 		'title': 'Customer Portfolios',
 		'link_new': 'portfolios:customer_portfolio_new',
 		'link_edit': 'portfolios:customer_portfolio_edit',
 		'link_delete': 'portfolios:customer_portfolio_delete',
+		'fields': ['name', 'supplier', 'customer'],
 		'objs': objs,
 		'no_objects_msg': 'You have no Customer Portfolios',
 		}

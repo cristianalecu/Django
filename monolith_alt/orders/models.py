@@ -31,6 +31,15 @@ class Order(models.Model):
 		return total_cost
 
 class SupplierOrder(models.Model):
+	ORDER_STATUS = (
+	(0,'Placed'),
+	(1,'In process'),
+	(1,'In delivery'),
+	(3,'Delivered'),
+	(4,'Paid'),
+	(5,'Closed'),
+	)
+
 	user = models.ForeignKey(User, related_name='supplier_orders')
 	customer = models.ForeignKey(Customer, related_name='supplier_orders')
 	supplier = models.ForeignKey(Supplier, related_name='supplier_orders')
@@ -41,10 +50,10 @@ class SupplierOrder(models.Model):
 	phone = models.CharField(max_length=20)	
 	notes = models.CharField(max_length=250)
 	created = models.DateTimeField(auto_now_add=True)
-	status = models.BooleanField(default=False)
+	status = models.PositiveIntegerField(choices = ORDER_STATUS, default=0)
 
 class SupplierOrderItem(models.Model):
-	order = models.ForeignKey(Order, related_name='supplier_order_items')
+	order = models.ForeignKey(SupplierOrder, related_name='supplier_order_items')
 	product = models.ForeignKey(Product, related_name='supplier_order_products')
 	price = models.DecimalField(max_digits=10, decimal_places=2)
 	quantity = models.PositiveIntegerField(default=1)

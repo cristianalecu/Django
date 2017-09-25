@@ -1,5 +1,6 @@
 {% extends 'shop/base.html' %}
 {% load static %}
+{% load getattribute %}
 {% block title %}{{title}}{% endblock %}
 {% block content %}
 <section>
@@ -9,36 +10,38 @@
 			<div class="card card-underline">
 				<div class="card-head">
 					<header>{{title}}</header>
-								{% for k,v in objs.items %}
-								{{ k }}, {{ v }} <br>
-								{% endfor %}
-					<a style="float:right;" href="{% url link_new %}" class="btn btn-floating-action btn-primary"><span class="glyphicon glyphicon-plus"></span></a>
+					<a title="Add new" style="float:right;" href="{% url link_new %}" class="btn btn-floating-action btn-primary"><span class="glyphicon glyphicon-plus"></span></a>
 				</div>
 				<div class="card-body">
 				{% if objs %}
+				    {% with "0" as header_printed %}
 					<div class="table-responsive">
 						<table id="datatable1" class="table order-column hover">
+								{% for obj in objs %}
+								    {% if header_printed == '0' %}
 							<thead>
 								<tr>
-									<th>Order number</th>
-									<th>Name</th>
-									<th>Address</th>
-									<th>Amount</th>
+								    {% for field in fields %}								      
+									<th>{% get_verbose_field_name obj field %}</th>
+									{% endfor %}
 									<th></th>
 								</tr>
 							</thead>
 							<tbody>
-								{% for obj in objs %}
+							        {% with "1" as header_printed %}
+							        {% endwith %}
+								    {% endif %}
 									<tr class="gradeX">
-										<td><a href="{% url link_edit obj.id %}">{{ obj.id }}</a></td>
-										<td>{{ obj.name }}</td>
-										<td>{{ obj.supplier }}</td>
-										<td>{{ obj.customer }}</td>
+										{% for field in fields %}								      
+										<td>{{ obj|getattribute:field }}</td>
+										{% endfor %}
 										<td class="text-center">
-											<a href="{% url link_delete obj.id %}" class="btn btn-floating-action btn-danger" onclick="return confirm('Are you sure you want to delete line?')"><i class="md md-delete"></i> </a>
+										    <a title="Edit" href="{% url link_edit obj.id %}" class="btn btn-floating-action btn-primary"><span class="glyphicon glyphicon-pencil"></i></a>
+											<a title="Delete" href="{% url link_delete obj.id %}" class="btn btn-floating-action btn-danger" onclick="return confirm('Are you sure you want to delete line?')"><i class="md md-delete"></i> </a>
 										</td>
 									</tr>
 								{% endfor %}
+								{% endwith %}
 							</tbody>
 						</table>
 					</div>

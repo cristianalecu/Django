@@ -1,18 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.template.loader import render_to_string
 from django.db.models import Sum, Count, F # does stuff with database field manipulation
 from django.http import HttpResponse
 
-from shop.models import UnitMeasure
+from shop.models import UnitMeasure, Supplier
 from cart.cart import Cart
 from users.models import Customer
+from orders.models import SupplierOrder, SupplierOrderItem
+from orders.forms import SupplierOrderForm
 
 from .models import Order, OrderItem
 from .forms import OrderCreateForm
 from .resources import OrderResource, OrderItemResource
 from .tasks import create_order
 from .pika import create_order2
+
+from django.forms.formsets import formset_factory
+from django.forms import modelformset_factory
 
 def order_create(request):
 	if not request.user.is_authenticated:
@@ -147,3 +151,101 @@ def order_single_export(request, order_id):
 	filename = "order_{}{}_{}".format(customer.first_name, customer.last_name, order.id)
 	response['Content-Disposition'] = 'attachment; filename="{}.xls"'.format(filename)
 	return response
+
+def supplierorder_list(request):
+	if not request.user.is_authenticated:
+		return redirect('users:login')
+	objs = SupplierOrder.objects.filter(user=request.user)
+	args = {
+		'title': 'Supplier Order',
+		'formset_title': 'Order items',
+		'link_new': 'orders:supplierorder_new',
+		'link_edit': 'orders:supplierorder_edit',
+		'link_delete': 'orders:supplierorder_delete',
+		'fields': ['supplier', 'customer', 'first_name', 'last_name', 'phone', 'address'],
+		'objs': objs,
+		'no_objects_msg': 'You have no Supplier Orders',
+		}
+	return render(request, 'shop/sheet.html', args)
+
+def supplierorder_new(request):
+	if not request.user.is_authenticated:
+		return redirect('users:login')
+	SupplierOrderFormSet = modelformset_factory(
+		SupplierOrderItem, 
+		fields=('product', 'price', 'quantity', 'um'), 
+		can_delete=True,
+		extra=1)
+	if request.method == "POST":
+		form = SupplierOrderForm(request.POST)
+		formset = SupplierOrderFormSet(request.POST, request.FILES)
+		if form.is_valid() and formset.is_valid() :
+			obj = form.save(commit=False)
+			obj.user = request.user
+			obj.save()
+			instances = formset.save(commit=False)
+			for instance in instances:
+				instance.order = obj
+				instance.save()
+			formset.save(commit=True)
+			return redirect('orders:supplierorder_list')
+	else:
+		form = SupplierOrderForm()
+		formset = SupplierOrderFormSet(queryset=SupplierOrderItem.objects.none())
+
+	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
+	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
+	args = {
+		'form_title': 'Supplier Order',
+		'formset_title': 'Order items',
+		'link_new': 'orders:supplierorder_new',
+		'link_edit': 'orders:supplierorder_edit',
+		'link_delete': 'orders:supplierorder_delete',
+		'form': form,
+		'formset': formset,
+		}
+	return render(request, 'shop/form_formset_edit.html', args)
+
+def supplierorder_edit(request, pk):
+	if not request.user.is_authenticated:
+		return redirect('users:login')
+	obj = get_object_or_404(SupplierOrder, pk=pk)
+	SupplierOrderFormSet = modelformset_factory(
+		SupplierOrderItem, 
+		fields=('product', 'price', 'quantity', 'um'), 
+		can_delete=True,
+		extra=1)
+	if request.method == "POST":
+		form = SupplierOrderForm(request.POST, instance=obj)
+		formset = SupplierOrderFormSet(request.POST, request.FILES, queryset=SupplierOrderItem.objects.filter(order=obj))
+		if form.is_valid() and formset.is_valid() :
+			obj = form.save(commit=False)
+			obj.user = request.user
+			obj.save()
+			instances = formset.save(commit=False)
+			for instance in instances:
+				instance.order = obj
+				instance.save()
+			formset.save(commit=True)
+			return redirect('orders:supplierorder_list')
+	else:
+		form = SupplierOrderForm(instance=obj)
+		formset = SupplierOrderFormSet(queryset=SupplierOrderItem.objects.filter(order=obj))
+
+	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
+	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
+	args = {
+		'form_title': 'Supplier Order',
+		'formset_title': 'Order items',
+		'link_new': 'orders:supplierorder_new',
+		'link_edit': 'orders:supplierorder_edit',
+		'link_delete': 'orders:supplierorder_delete',
+		'form': form,
+		'formset': formset,
+		}
+	return render(request, 'shop/form_formset_edit.html', args)
+
+def supplierorder_delete(request, pk):
+	obj = get_object_or_404(SupplierOrder, pk=pk)
+	obj.delete()
+	return redirect('orders:supplierorder_list')

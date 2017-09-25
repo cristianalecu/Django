@@ -71,7 +71,6 @@ def customer_sheet(request):
 		 Customer, 
 		 fields=('first_name','last_name','address','city','phone','email'), 
 		 can_delete=True,
-		 can_order=True,
 		 extra=1)
 	if not request.user.is_authenticated:
 		return redirect('users:login')
@@ -110,7 +109,6 @@ def supplier_sheet(request):
 		 Supplier, 
 		 fields=('name','address'), 
 		 can_delete=True,
-		 can_order=True,
 		 extra=1)
 	if not request.user.is_authenticated:
 		return redirect('users:login')

@@ -26,18 +26,16 @@ function hide_row(idx)
 	$("#sheet-"+idx).hide();
 }
 </script>
-
 <section>
-<div class="section-body contain-lg"  style=" max-width: 1400px; width: 1400px">
+<div class="section-body contain-lg"  style=" max-width: 1400px;">
 	<div class="row table-row">
 		<div >
 			<div class="card card-underline">
 				<div class="card-head">
 					<header>{{ title }}</header>
 				</div>
-
 				<div class="card-body">
-					<form class="form" method="post">
+					
 					  {% csrf_token %}
 					  {{ formset.management_form }}
 					  <table class="table">
@@ -72,6 +70,58 @@ function hide_row(idx)
 					  {% endfor %}
 					  {{ formset.non_form_errors }}
 					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</section>
+<section>
+<div class="contain-lg">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="card card-underline">
+				<div class="card-head">
+					<header>{{title}}</header>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+					    <form class="form" method="post">
+					    {% csrf_token %}
+					    {{ formset.management_form }}
+						<table id="datatable1" class="table order-column hover">
+							{% for form in formset %}
+					          {% if form.prefix == 'form-0' %}
+								<thead>
+									<tr>
+									    {% for field in form %}
+								        {% if field.label != 'Id' %}
+								        <th>{{ field.label }}</th>
+								        {% endif %}
+								        {% endfor %}
+									</tr>
+								</thead>
+							  {% endif %}
+								<tbody>
+							      {{ form.id }}
+							      <tr id="sheet-{{form.prefix}}">
+							      	{% for field in form %}
+							      	{% if field.label != 'Id' %}
+							        <td> {{ field }} </td>
+							        {% endif %}
+							      	{% endfor %}
+							      </tr>
+							</tbody>
+							{% endfor %}
+						</table>
+						<p class="stick-bottom-right"><a href="#" class="btn btn-info" role="button" onclick="add_row(); return false;">+</a>
+					  <input type="submit" value="Save" class="btn btn-primary"/></p>
+					  </form>
+					  {% for error in formset.errors %}
+					        {{ error }}<br/>
+					  {% endfor %}
+					  {{ formset.non_form_errors }}
+					</div>
 				</div>
 			</div>
 		</div>
