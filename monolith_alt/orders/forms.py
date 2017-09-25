@@ -29,6 +29,10 @@ class SupplierOrderForm(forms.ModelForm):
             'phone': 'Phone',
             'notes': 'Notes',
         }
+		empty_labels = {
+			'customer': "Select a customer",
+			'supplier': "Select a supplier",
+		}
 		help_texts = {
             'supplier': 'Supplier for all the items in this order',
             'customer': 'Customer to receive the order',

@@ -3,8 +3,9 @@
 {% load getattribute %}
 {% block title %}{{title}}{% endblock %}
 {% block content %}
+
 <section>
-<div class="contain-lg">
+<div class="contain-lg" style="max-width: 1400px;">
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="card card-underline">
@@ -14,23 +15,18 @@
 				</div>
 				<div class="card-body">
 				{% if objs %}
-				    {% with "0" as header_printed %}
 					<div class="table-responsive">
 						<table id="datatable1" class="table order-column hover">
-								{% for obj in objs %}
-								    {% if header_printed == '0' %}
 							<thead>
 								<tr>
 								    {% for field in fields %}								      
-									<th>{% get_verbose_field_name obj field %}</th>
+									<th>{% get_verbose_field_name objs field %}</th>
 									{% endfor %}
 									<th></th>
 								</tr>
 							</thead>
 							<tbody>
-							        {% with "1" as header_printed %}
-							        {% endwith %}
-								    {% endif %}
+								{% for obj in objs %}
 									<tr class="gradeX">
 										{% for field in fields %}								      
 										<td>{{ obj|getattribute:field }}</td>
@@ -41,7 +37,6 @@
 										</td>
 									</tr>
 								{% endfor %}
-								{% endwith %}
 							</tbody>
 						</table>
 					</div>

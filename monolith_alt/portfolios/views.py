@@ -129,6 +129,8 @@ def customer_portfolio_new(request):
 
 	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
 	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
+	form.fields['supplier'].empty_label = 'Select a supplier'
+	form.fields['customer'].empty_label = 'Select a customer'
 	args = {
 		'form_title': 'Customer Portfolio',
 		'formset_title': 'Portfolio items',
@@ -151,16 +153,13 @@ def customer_portfolio_edit(request, pk):
 		extra=1)
 	if request.method == "POST":
 		form = CustomerPortfolioForm(request.POST, instance=obj)
-		formset = CustPortfolioProdFormSet(request.POST, request.FILES, queryset=CustomerPortfolio.objects.filter(portfolio=obj))
+		formset = CustPortfolioProdFormSet(request.POST, request.FILES)
 		if form.is_valid() and formset.is_valid() :
 			obj = form.save(commit=False)
 			obj.user = request.user
 			obj.save()
 			instances = formset.save(commit=False)
 			for instance in instances:
-				instance.user = request.user
-				instance.author = obj
-				instance.save()
 				instance.portfolio = obj
 				instance.save()
 			formset.save(commit=True)
@@ -171,6 +170,8 @@ def customer_portfolio_edit(request, pk):
 
 	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
 	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
+	form.fields['supplier'].empty_label = 'Select a supplier'
+	form.fields['customer'].empty_label = 'Select a customer'
 	args = {
 		'form_title': 'Customer Portfolio',
 		'formset_title': 'Portfolio items',

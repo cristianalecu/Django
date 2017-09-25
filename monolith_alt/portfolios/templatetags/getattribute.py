@@ -20,12 +20,22 @@ def getattribute(value, arg):
 register.filter('getattribute', getattribute)
 
 @register.simple_tag
-def get_verbose_field_name(instance, field_name):
+def get_verbose_object_field_name(instance, field_name):
     """
-    Returns verbose_name for a field.
+    Returns verbose_name for an object field.
     """
     return instance._meta.get_field(field_name).verbose_name.title()
 
+@register.simple_tag
+def get_verbose_field_name(objs, field_name):
+    """
+    Returns verbose_name for a field.
+    """
+    for instance in objs.model._meta.fields :
+        if instance.name == field_name:
+            return instance.verbose_name
+    return field_name
+   
 class PdbNode(Node):
 
     def render(self, context):
