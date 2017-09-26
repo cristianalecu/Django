@@ -19,7 +19,7 @@ class OrderCreateForm(forms.ModelForm):
 class SupplierOrderForm(forms.ModelForm):
 	class Meta:
 		model = SupplierOrder
-		fields = ['supplier', 'customer', 'first_name', 'last_name', 'email', 'address', 'phone', 'status', 'notes']
+		fields = ['supplier', 'customer', 'first_name', 'last_name', 'email', 'address', 'phone', 'status']
 		labels = {
             'supplier': 'Supplier',
             'customer': 'Customer',
@@ -29,7 +29,6 @@ class SupplierOrderForm(forms.ModelForm):
             'address': 'Address',
             'phone': 'Phone',
             'status': 'Status',
-            'notes': 'Notes',
         }
 		empty_labels = {
 			'customer': "Select a customer",
@@ -44,8 +43,5 @@ class SupplierOrderForm(forms.ModelForm):
             'address': 'Address',
             'phone': 'Phone',
             'status': 'Order Status',
-            'notes': 'Notes about delivering and contact receiving',
         }
-		widgets = {
-            'notes': Textarea(attrs={'cols': '20', 'rows': '5'}),
-        }
+		
