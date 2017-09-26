@@ -8,15 +8,113 @@
 var empty_form = "";
 var empty_row = "";
 var table_rows = 0;
- 
+var filterItems = 0;
+var filterPortfolio = 0;
+var pre_filled_rows = 0;
+
+var cntItems = -1;  //supplier items
+var ndxItem = Array();
+var descItems = Array();
+var priceItems = Array();
+
+var cntPortoItems = 0;  //portfolio items
+var ndxPortoItem = Array();
+var pricePortoItems = Array();
+var qtyPortoItems = Array();
+var umPortoItems = Array();
+
+function changeComboOptions(idx)
+{
+	var id = "#id_form-"+idx+"-product";
+	$(id).empty();
+	$(id).append('<option value="">---------</option>');
+	$.each(ndxItem, function(key, value){
+		$(id).append('<option value="' + value + '">' + descItems[value] +'</option>');
+	});
+	//$(id).multiSelect('refresh');
+	$("#id_form-"+idx+"-price").val("");
+	$("#id_form-"+idx+"-quantity").val("0");
+}
+
+function combo_change()
+{
+	var combo = $(this);
+	if(combo[0].id.startsWith('id_form-') && combo[0].id.endsWith('-product'))
+	{
+		var form_id = parseInt(combo[0].id.substr(8));
+		var prod_id = $(this).val();
+		if(filterPortfolio == 2)
+		{
+			$("#id_form-"+form_id+"-price").prop( "disabled", false );
+			$("#id_form-"+form_id+"-price").val(priceItems[prod_id]);
+			$("#id_form-"+form_id+"-price").prop( "disabled", true );
+		}
+		else
+			$("#id_form-"+form_id+"-price").val(priceItems[prod_id]);
+	}
+}
+
+function add_first_line(ndx)
+{
+	var i = 0;
+	var sOld = "";
+	var sNew = "";
+	var sHtml = "";
+	
+	for(i=table_rows; i>0; i--)
+	{
+		sOld = "form-"+(i-1);
+		sNew = "form-"+i;
+		sHtml = $("#sheet-form-"+(i-1))[0].outerHTML;
+		$("#sheet-form-"+(i-1))[0].outerHTML = sHtml.split(sOld).join(sNew);
+	}
+	append = empty_row.split(empty_form).join('form-0');  // replace(empty_form, xform) don't replace all
+	$("#sheet-form-1").before(append);
+	if(cntItems > -1)
+		changeComboOptions(0);
+	$('#id_form-0-product').change(combo_change);
+	
+	table_rows++;
+	document.getElementById("id_form-TOTAL_FORMS").setAttribute('value', ''+table_rows);
+}
+
+function remove_first_line()
+{
+	var i = 0;
+	var sOld = "";
+	var sNew = "";
+	var sHtml = "";
+	
+	if(table_rows > 0)
+	{
+		//$("#id_form-0-id").remove();
+		$("#sheet-form-0").remove();
+		table_rows--;	
+		if(table_rows > 0)
+			for(i=1; i<=table_rows; i++)
+			{
+				sOld = "form-"+i;
+				sNew = "form-"+(i-1);
+				sHtml = $("#sheet-form-"+i)[0].outerHTML;
+				$("#sheet-form-"+i)[0].outerHTML = sHtml.split(sOld).join(sNew);
+			}
+		document.getElementById("id_form-TOTAL_FORMS").setAttribute('value', ''+table_rows);
+	}
+}
+
 function add_row()
 {
-	var max = parseInt(document.getElementById("id_form-TOTAL_FORMS").value);
+	var max = table_rows;
 	var xform = 'form-'+max;
 	max++;
-	document.getElementById("id_form-TOTAL_FORMS").setAttribute('value', ''+max);
+	table_rows++;
+	document.getElementById("id_form-TOTAL_FORMS").setAttribute('value', ''+table_rows);
 	append = empty_row.split(empty_form).join(xform);  // replace(empty_form, xform) don't replace all
-	$("#sheet-"+empty_form).after(append);
+	$("#sheet-form-"+(max-2)).after(append);
+	if(cntItems > -1)
+		changeComboOptions(max-1);
+	$('#id_form-'+(max-1)+'-product').change(combo_change);
+	//$('select').change(combo_change);
 }
 function hide_row(idx)
 {
@@ -27,6 +125,17 @@ function hide_row(idx)
 }
 </script>
 <section>
+{% if filter_items %}    <!--  Portfolio  form   -->
+	<script type="text/javascript">
+	filterItems = {{ filter_items }};
+	</script>
+{% endif %}
+{% if filter_portfolio %}    <!--  Order form  -->
+	<script type="text/javascript">
+	filterItems = 1;
+	filterPortfolio = {{ filter_portfolio }};
+	</script>
+{% endif %}
 <form class="form" role="form" method="post">
 	{% csrf_token %}
 		<div class="col-lg-6">
@@ -69,39 +178,7 @@ function hide_row(idx)
 					<header>{{formset_title}}</header>
 				</div>
 				<div class="card-body">
-<!--
-					<div class="table-responsive">
-					    {{ formset.management_form }}
-					    <div style="margin-bottom: 25px;">
-						<table id="datatable1" class="table order-column hover" >
-							{% for formx in formset %}
-					          {% if formx.prefix == 'form-0' %}
-								<thead>
-									<tr>
-									    {% for field in formx %}
-								        {% if field.label != 'Id' %}
-								        <th>{{ field.label }}</th>
-								        {% endif %}
-								        {% endfor %}
-									</tr>
-								</thead>
-							  {% endif %}
-								<tbody>
-							      
-							      <tr id="sheet-{{formx.prefix}}">
-							      	{% for field in formx %}
-							      	{% if field.label != 'Id' %}
-							        <td>{{ formx.id }} {{ field }} </td>
-							        {% endif %}
-							      	{% endfor %}
-							      </tr>
-							{% endfor %}
-							</tbody>
-						</table>
-						</div>
-						<p class="stick-bottom-right"><a href="#" class="btn btn-info" role="button" onclick="add_row(); return false;">+</a>
-					    <input type="submit" value="Save" class="btn btn-primary"/></p>
--->
+
 					  {{ formset.management_form }}
 					  <table class="table">
 					    {% for formx in formset %}
@@ -115,8 +192,8 @@ function hide_row(idx)
 						        {% endfor %}
 						      </tr>
 						    </thead>
+						    <tbody>
 					      {% endif %}
-					      <tbody>
 					      {{ formx.id }}
 					      <tr id="sheet-{{formx.prefix}}">
 					      	{% for field in formx %}
@@ -143,8 +220,11 @@ function hide_row(idx)
 {% endif %}
 </form>
 </section><script type="text/javascript">
+var request_url = "";
 var customer_id=-1;
 var supplier_id=-1;
+var old_supplier_id=-1;
+var old_customer_id=-1;
 
 $(document).ready(function(){
 	table_rows = parseInt(document.getElementById("id_form-TOTAL_FORMS").value);
@@ -153,38 +233,107 @@ $(document).ready(function(){
 	
 	customer_id = $('select[name=customer]').val();
 	supplier_id = $('select[name=supplier]').val();
+	old_customer_id=customer_id;
+	old_supplier_id = supplier_id;
+	
+	function get_Items()
+	{
+		request_url = '/products/get-products/' + supplier_id + '/';
+		$.ajax({
+			url: request_url,
+			success: function(data){
+				var i = 0;
+				
+				cntItems = data.length;  //supplier items
+				ndxItem = Array();
+				descItems = Array();
+				priceItems = Array();
+				
+				if(data.length > 0)
+				{
+					for(i=0; i<data.length; i++)
+					{
+						ndxItem[i] = data[i].pk;
+						descItems[ndxItem[i]] = data[i].fields.name;
+						priceItems[ndxItem[i]] = data[i].fields.price;
+					}
+					if(filterPortfolio != 2)
+						for(i=0; i<table_rows; i++)
+							changeComboOptions(i);
+				}
+			}
+		})
+	}
+	
+	function get_PortoItems()
+	{
+		request_url = '/portfolios/get_portfolio_products/' + customer_id + '/' + supplier_id + '/';
+		$.ajax({
+			url: request_url,
+			success: function(data){
+				var i = 0;
+				var old_cntPortoItems = cntPortoItems;
+				
+				cntPortoItems = data.length;  //portfolio items
+				ndxPortoItem = Array();
+				pricePortoItems = Array();
+				qtyPortoItems = Array();
+				umPortoItems = Array();
+				
+				if(old_cntPortoItems > 0)
+					for(i=0; i<old_cntPortoItems; i++)
+						remove_first_line();
+				
+				if(data.length > 0)
+				{
+					for(i=0; i<data.length; i++)
+					{
+						ndxPortoItem[i] = data[i].fields.product;
+						qtyPortoItems[ndxItem[i]] = data[i].fields.quantity;
+						pricePortoItems[ndxItem[i]] = data[i].fields.price;
+						umPortoItems[ndxItem[i]] = data[i].fields.um;
+					}
+					for(i=0; i<cntPortoItems; i++)
+						add_first_line(cntPortoItems-i-1);
+					for(i=0; i<cntPortoItems; i++)
+					{
+						$('#id_form-'+i+'-product').val(ndxPortoItem[i]);
+						$('#id_form-'+i+'-price').val(pricePortoItems[ndxPortoItem[i]]);
+						$('#id_form-'+i+'-quantity').val(qtyPortoItems[ndxPortoItem[i]]);
+						$('#id_form-'+i+'-um').val(umPortoItems[ndxPortoItem[i]]);
+					}				
+				}
+			}
+		})
+	}
 	
 	function change_portfolio_products()
 	{
-		if(supplier_id.length > 0 && customer_id.length > -1)
+		var supplier_changed=0;
+		var customer_changed=0;
+		
+		if(supplier_id.length > 0 && supplier_id != old_supplier_id)
 		{
-			//request_url = '/portfolios/get-portfolio/' + customer_id + '/' + supplier_id + '/';
-			//$.ajax({
-			//	url: request_url,
-			//	success: function(data){
-			//		var count = data.length;
-			//		
-			//	}
-			//})
+			supplier_changed = 1;
+			old_supplier_id = supplier_id;
 		}
+		if(customer_id.length > 0 && customer_id != old_customer_id)
+		{
+			customer_changed = 1;
+			old_customer_id = customer_id;
+		}
+		
+		if(filterItems > 0 && supplier_id.length > 0 && supplier_changed)
+			get_Items();
+
+		if(filterPortfolio > 0 && supplier_id.length > 0 && customer_id.length > 0 && (supplier_changed || customer_changed))
+			get_PortoItems();
 	}
 	
-	$('select').change(function(){
-		var combo = $(this);
-		if(combo[0].id.startsWith('id_form-') && combo[0].id.endsWith('-product'))
-		{
-			var form_id = parseInt(combo[0].id.substr(8));
-			var prod_id = $(this).val();
-			var request_url = '/shop/get_product_details/' + prod_id + '/';
-			$.ajax({
-				url: request_url,
-				success: function(data){
-					$('#id_form-'+form_id+'-price').val(data[0].fields.price);
-					$('#id_form-'+form_id+'-um').val(data[0].fields.um);
-				}
-			})
-		}
-	})
+	if(filterPortfolio == 2)
+		get_Items();
+	
+	$('select').change(combo_change);
 	
 	$('select[name=customer]').change(function(){
 		customer_id = $(this).val();

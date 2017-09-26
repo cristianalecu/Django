@@ -48,7 +48,7 @@ class SupplierOrder(models.Model):
 	email = models.EmailField()
 	address = models.CharField(max_length=250)
 	phone = models.CharField(max_length=20)	
-	notes = models.CharField(max_length=250)
+	notes = models.CharField(max_length=250, blank=True)
 	created = models.DateTimeField(auto_now_add=True)
 	status = models.PositiveIntegerField(choices = ORDER_STATUS, default=0)
 

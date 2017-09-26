@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.db.models import Sum, Count, F # does stuff with database field manipulation
 from django.http import HttpResponse
 
-from shop.models import UnitMeasure, Supplier
+from shop.models import UnitMeasure, Supplier, Product
 from cart.cart import Cart
 from users.models import Customer
 from orders.models import SupplierOrder, SupplierOrderItem
@@ -195,6 +195,8 @@ def supplierorder_new(request):
 
 	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
 	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
+	form.fields['supplier'].empty_label = 'Select a supplier'
+	form.fields['customer'].empty_label = 'Select a customer'
 	args = {
 		'form_title': 'Supplier Order',
 		'formset_title': 'Order items',
@@ -203,6 +205,7 @@ def supplierorder_new(request):
 		'link_delete': 'orders:supplierorder_delete',
 		'form': form,
 		'formset': formset,
+		'filter_portfolio': 1,
 		}
 	return render(request, 'shop/form_formset_edit.html', args)
 
@@ -213,7 +216,6 @@ def supplierorder_edit(request, pk):
 	SupplierOrderFormSet = modelformset_factory(
 		SupplierOrderItem, 
 		fields=('product', 'price', 'quantity', 'um'), 
-		can_delete=True,
 		extra=1)
 	if request.method == "POST":
 		form = SupplierOrderForm(request.POST, instance=obj)
@@ -232,8 +234,15 @@ def supplierorder_edit(request, pk):
 		form = SupplierOrderForm(instance=obj)
 		formset = SupplierOrderFormSet(queryset=SupplierOrderItem.objects.filter(order=obj))
 
-	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
-	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
+# 	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
+# 	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
+# 	form.fields['supplier'].empty_label = 'Select a supplier'
+# 	form.fields['customer'].empty_label = 'Select a customer'
+	form.fields['supplier'].disabled = True
+	form.fields['customer'].disabled = True
+	for xform in formset:
+		xform.fields['product'].queryset=Product.objects.filter(supplier=obj.supplier)
+		xform.fields['price'].disabled=True
 	args = {
 		'form_title': 'Supplier Order',
 		'formset_title': 'Order items',
@@ -242,6 +251,7 @@ def supplierorder_edit(request, pk):
 		'link_delete': 'orders:supplierorder_delete',
 		'form': form,
 		'formset': formset,
+		'filter_portfolio': 2,
 		}
 	return render(request, 'shop/form_formset_edit.html', args)
 

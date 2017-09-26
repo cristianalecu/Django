@@ -3,6 +3,7 @@ from django import forms
 from .models import Order
 from users.models import Customer
 from orders.models import SupplierOrder
+from django.forms.widgets import Textarea
 
 class OrderCreateForm(forms.ModelForm):
 	customer = forms.ModelChoiceField(queryset=Customer.objects.all(), empty_label="Select a customer")
@@ -18,7 +19,7 @@ class OrderCreateForm(forms.ModelForm):
 class SupplierOrderForm(forms.ModelForm):
 	class Meta:
 		model = SupplierOrder
-		fields = ['supplier', 'customer', 'first_name', 'last_name', 'email', 'address', 'phone', 'notes']
+		fields = ['supplier', 'customer', 'first_name', 'last_name', 'email', 'address', 'phone', 'status', 'notes']
 		labels = {
             'supplier': 'Supplier',
             'customer': 'Customer',
@@ -27,6 +28,7 @@ class SupplierOrderForm(forms.ModelForm):
             'email': 'Email',
             'address': 'Address',
             'phone': 'Phone',
+            'status': 'Status',
             'notes': 'Notes',
         }
 		empty_labels = {
@@ -41,5 +43,9 @@ class SupplierOrderForm(forms.ModelForm):
             'email': 'Email',
             'address': 'Address',
             'phone': 'Phone',
+            'status': 'Order Status',
             'notes': 'Notes about delivering and contact receiving',
+        }
+		widgets = {
+            'notes': Textarea(attrs={'cols': '20', 'rows': '5'}),
         }

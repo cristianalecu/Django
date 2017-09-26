@@ -90,11 +90,10 @@ def portfolio_order(request):
 	return redirect('dashboard')
 
 def get_portfolio_products(self, customer_id, supplier_id):
-	customer = Customer.objects.filter(id=customer_id)
-	supplier = Supplier.objects.filter(id=supplier_id)
 	filterargs = { 'customer_id': customer_id, 'supplier_id': supplier_id }
-	portfolio =  Portfolio.objects.filter(**filterargs)
-	return HttpResponse(serializers.serialize('json', portfolio), content_type="application/json")
+	portfolio =  CustomerPortfolio.objects.filter(**filterargs)
+	products = CustomerPortfolioProduct.objects.filter(portfolio=portfolio)
+	return HttpResponse(serializers.serialize('json', products), content_type="application/json")
 
 def customer_portfolio_list(request):
 	if not request.user.is_authenticated:
@@ -114,16 +113,28 @@ def customer_portfolio_list(request):
 def customer_portfolio_new(request):
 	if not request.user.is_authenticated:
 		return redirect('users:login')
+	CustPortfolioProdFormSet = modelformset_factory(
+		CustomerPortfolioProduct, 
+		fields=('product', 'price', 'quantity', 'um'), 
+		can_delete=True,
+		extra=1)
 	if request.method == "POST":
 		form = CustomerPortfolioForm(request.POST)
-		if form.is_valid() :
+		formset = CustPortfolioProdFormSet(request.POST, request.FILES)
+		if form.is_valid() and formset.is_valid() :
 			obj = form.save(commit=False)
 			obj.user = request.user
 			obj.save()
-			
-			return redirect('portfolios:customer_portfolio_edit', pk=obj.id)
+			instances = formset.save(commit=False)
+			for instance in instances:
+				instance.user = request.user
+				instance.portfolio = obj
+				instance.save()
+			formset.save(commit=True)
+			return redirect('portfolios:customer_portfolio_list')
 	else:
 		form = CustomerPortfolioForm()
+		formset = CustPortfolioProdFormSet(queryset=CustomerPortfolioProduct.objects.none())
 
 	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
 	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
@@ -131,55 +142,15 @@ def customer_portfolio_new(request):
 	form.fields['customer'].empty_label = 'Select a customer'
 	args = {
 		'form_title': 'Customer Portfolio',
+		'formset_title': 'Portfolio items',
 		'link_new': 'portfolios:customer_portfolio_new',
 		'link_edit': 'portfolios:customer_portfolio_edit',
 		'link_delete': 'portfolios:customer_portfolio_delete',
 		'form': form,
+		'formset': formset,
+		'filter_items': 1,
 		}
 	return render(request, 'shop/form_formset_edit.html', args)
-
-### This was to edit also item when a new portfolio in created ###
-# def customer_portfolio_new(request):
-# 	if not request.user.is_authenticated:
-# 		return redirect('users:login')
-# 	CustPortfolioProdFormSet = modelformset_factory(
-# 		CustomerPortfolioProduct, 
-# 		fields=('product', 'price', 'quantity', 'um'), 
-# 		can_delete=True,
-# 		extra=1)
-# 	if request.method == "POST":
-# 		form = CustomerPortfolioForm(request.POST)
-# 		formset = CustPortfolioProdFormSet(request.POST, request.FILES)
-# 		if form.is_valid() and formset.is_valid() :
-# 			obj = form.save(commit=False)
-# 			obj.user = request.user
-# 			obj.save()
-# 			instances = formset.save(commit=False)
-# 			for instance in instances:
-# 				instance.user = request.user
-# 				instance.portfolio = obj
-# 				instance.save()
-# 			formset.save(commit=True)
-# 			return redirect('portfolios:customer_portfolio_list')
-# 	else:
-# 		form = CustomerPortfolioForm()
-# 		formset = CustPortfolioProdFormSet(queryset=CustomerPortfolioProduct.objects.none())
-# 
-# 	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
-# 	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
-# 	form.fields['supplier'].empty_label = 'Select a supplier'
-# 	form.fields['customer'].empty_label = 'Select a customer'
-# 	args = {
-# 		'form_title': 'Customer Portfolio',
-# 		'formset_title': 'Portfolio items',
-# 		'link_new': 'portfolios:customer_portfolio_new',
-# 		'link_edit': 'portfolios:customer_portfolio_edit',
-# 		'link_delete': 'portfolios:customer_portfolio_delete',
-# 		'form': form,
-# 		'formset': formset,
-# 		'filter_items': 1,
-# 		}
-# 	return render(request, 'shop/form_formset_edit.html', args)
 
 def customer_portfolio_edit(request, pk):
 	if not request.user.is_authenticated:
@@ -207,8 +178,12 @@ def customer_portfolio_edit(request, pk):
 		form = CustomerPortfolioForm(instance=obj)
 		formset = CustPortfolioProdFormSet(queryset=CustomerPortfolioProduct.objects.filter(portfolio=obj))
 
-	form.fields['supplier'].disabled = True
-	form.fields['customer'].disabled = True
+	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
+	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
+	form.fields['supplier'].empty_label = 'Select a supplier'
+	form.fields['customer'].empty_label = 'Select a customer'
+	# 	form.fields['supplier'].disabled = True
+	# 	form.fields['customer'].disabled = True
 	for choice_form in formset:
 		choice_form.fields['product'].queryset = Product.objects.filter(supplier=obj.supplier)
 	args = {
