@@ -5,7 +5,7 @@ from django.apps import AppConfig as BaseAppConfig
 
 class AppConfig(BaseAppConfig):
 
-    name = "financ"
+    name = "financiar"
 
     def ready(self):
-        import_module("financ.receivers")
+        import_module("financiar.receivers")

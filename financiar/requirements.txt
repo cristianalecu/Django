@@ -1,5 +1,6 @@
 Django
-django-widget-tweaks
 django-user-accounts
+pinax-webanalytics
+pinax-eventlog
 pinax-theme-bootstrap
 

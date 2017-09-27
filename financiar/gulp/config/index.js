@@ -1,4 +1,4 @@
-const templatePath = 'financ/templates/';
+const templatePath = 'financiar/templates/';
 const staticRoot = 'static/';
 const staticSource = staticRoot + 'src/';
 const staticBuild = staticRoot + '_build/';
