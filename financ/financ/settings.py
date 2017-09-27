@@ -80,14 +80,14 @@ TEMPLATES = [
         "OPTIONS": {
             "debug": DEBUG,
             "context_processors": [
-                "django.contrib.auth.context_processors.auth",
                 "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.messages.context_processors.messages",
+                "django.contrib.auth.context_processors.auth",
                 "django.template.context_processors.i18n",
                 "django.template.context_processors.media",
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
-                "django.template.context_processors.request",
-                "django.contrib.messages.context_processors.messages",
                 "account.context_processors.account",
                 "pinax_theme_bootstrap.context_processors.theme",
             ],
@@ -163,9 +163,6 @@ STATICFILES_FINDERS = [
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = "d!4xcix_*qjj_94^$ptwiw6ls2wtm%fb8rud7esuzs3exnud@2"
-
-# Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = "financ.wsgi.application"
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
