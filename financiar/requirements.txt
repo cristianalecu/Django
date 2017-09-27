@@ -1,0 +1,5 @@
+Django
+django-widget-tweaks
+django-user-accounts
+pinax-theme-bootstrap
+
