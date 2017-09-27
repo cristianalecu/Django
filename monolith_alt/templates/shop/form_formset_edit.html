@@ -178,7 +178,39 @@ function hide_row(idx)
 					<header>{{formset_title}}</header>
 				</div>
 				<div class="card-body">
-
+<!--
+					<div class="table-responsive">
+					    {{ formset.management_form }}
+					    <div style="margin-bottom: 25px;">
+						<table id="datatable1" class="table order-column hover" >
+							{% for formx in formset %}
+					          {% if formx.prefix == 'form-0' %}
+								<thead>
+									<tr>
+									    {% for field in formx %}
+								        {% if field.label != 'Id' %}
+								        <th>{{ field.label }}</th>
+								        {% endif %}
+								        {% endfor %}
+									</tr>
+								</thead>
+							  {% endif %}
+								<tbody>
+							      
+							      <tr id="sheet-{{formx.prefix}}">
+							      	{% for field in formx %}
+							      	{% if field.label != 'Id' %}
+							        <td>{{ formx.id }} {{ field }} </td>
+							        {% endif %}
+							      	{% endfor %}
+							      </tr>
+							{% endfor %}
+							</tbody>
+						</table>
+						</div>
+						<p class="stick-bottom-right"><a href="#" class="btn btn-info" role="button" onclick="add_row(); return false;">+</a>
+					    <input type="submit" value="Save" class="btn btn-primary"/></p>
+-->
 					  {{ formset.management_form }}
 					  <table class="table">
 					    {% for formx in formset %}
