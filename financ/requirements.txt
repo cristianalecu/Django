@@ -1,0 +1,6 @@
+Django
+django-user-accounts
+pinax-webanalytics
+pinax-eventlog
+pinax-theme-bootstrap
+
