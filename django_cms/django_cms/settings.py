@@ -144,12 +144,12 @@ INSTALLED_APPS = (
     'cmsplugin_filer_folder',
     'cmsplugin_filer_image',
     'cmsplugin_filer_utils',
-    'djangocms_style',
     'djangocms_snippet',
     'djangocms_googlemap',
     'djangocms_video',
     
-    'django_cms'
+    'django_cms',
+    'aldryn_style'
 )
 
 LANGUAGES = (
