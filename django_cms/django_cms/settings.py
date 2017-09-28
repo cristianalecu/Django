@@ -13,17 +13,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'd3=9i-msen!+6yrh^qx4ces#(a+d&i3j-o0#f-v3e5fp9-ob8q'
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+#from djangocms_text_ckeditor.settings import CKEDITOR_SETTINGS
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'd3=9i-msen!+6yrh^qx4ces#(a+d&i3j-o0#f-v3e5fp9-ob8q'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -33,13 +35,41 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-
-
-
+INSTALLED_APPS = (
+    'djangocms_admin_style',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.admin',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
+    'django.contrib.staticfiles',
+    'django.contrib.messages',
+    'cms',
+    'menus',
+    'sekizai',
+    'treebeard',
+    'djangocms_text_ckeditor',
+    'filer',
+    'easy_thumbnails',
+    'djangocms_column',
+    'djangocms_link',
+    'cmsplugin_filer_file',
+    'cmsplugin_filer_folder',
+    'cmsplugin_filer_image',
+    'cmsplugin_filer_utils',
+    'djangocms_snippet',
+    'djangocms_googlemap',
+    'djangocms_video',
+    
+    'account',
+    'aldryn_style',
+    'mptt', 
+    'aldryn_bootstrap3',
+	'django_cms',
+)
 
 ROOT_URLCONF = 'django_cms.urls'
-
-
 
 WSGI_APPLICATION = 'django_cms.wsgi.application'
 
@@ -121,37 +151,6 @@ MIDDLEWARE_CLASSES = (
     'cms.middleware.language.LanguageCookieMiddleware'
 )
 
-INSTALLED_APPS = (
-    'djangocms_admin_style',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.admin',
-    'django.contrib.sites',
-    'django.contrib.sitemaps',
-    'django.contrib.staticfiles',
-    'django.contrib.messages',
-    'cms',
-    'menus',
-    'sekizai',
-    'treebeard',
-    'djangocms_text_ckeditor',
-    'filer',
-    'easy_thumbnails',
-    'djangocms_column',
-    'djangocms_link',
-    'cmsplugin_filer_file',
-    'cmsplugin_filer_folder',
-    'cmsplugin_filer_image',
-    'cmsplugin_filer_utils',
-    'djangocms_snippet',
-    'djangocms_googlemap',
-    'djangocms_video',
-    
-    'django_cms',
-    'aldryn_style'
-)
-
 LANGUAGES = (
     ## Customize this
     ('en', gettext('en')),
@@ -178,8 +177,7 @@ CMS_LANGUAGES = {
 CMS_TEMPLATES = (
     ## Customize this
     ('fullwidth.html', 'Fullwidth'),
-    ('sidebar_left.html', 'Sidebar Left'),
-    ('sidebar_right.html', 'Sidebar Right')
+    ('fulldemo.html', 'Fulldemo'),
 )
 
 CMS_PERMISSION = True
@@ -208,3 +206,36 @@ THUMBNAIL_PROCESSORS = (
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
     'easy_thumbnails.processors.filters'
 )
+
+# CKEDITOR_SETTINGS = {
+# 	# 'languuage': '{{ language }}',
+# 	# 'toolbar': 'CMS',
+# 	# 'toolbar_CMS': [
+# 	# 	['Undo', 'Redo'],
+# 	# 	...
+# 	# ],
+#     'stylesSet': [
+# 		{
+# 			'name': 'Page Header H1',
+# 			'element': 'h1',
+# 			'attributes': {
+# 				'class': 'page-header',
+# 			}
+# 		},
+# 		{
+# 			'name': 'Page Header H2',
+# 			'element': 'h2',
+# 			'attributes': {
+# 				'class': 'page-header',
+# 			}
+# 		},
+# 		{
+# 			'name': 'Page Header H3',
+# 			'element': 'h3',
+# 			'attributes': {
+# 				'class': 'page-header',
+# 			}
+# 		}
+#     ],
+# }
+
