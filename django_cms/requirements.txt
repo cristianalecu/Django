@@ -21,4 +21,4 @@ six
 
 aldryn-style
 aldryn-bootstrap3
-django-user-accounts
+django-allauth

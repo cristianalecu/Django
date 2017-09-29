@@ -62,12 +62,23 @@ INSTALLED_APPS = (
     'djangocms_googlemap',
     'djangocms_video',
     
-    'account',
     'aldryn_style',
     'mptt', 
     'aldryn_bootstrap3',
 	'django_cms',
+	
+	'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+#     'allauth.socialaccount.providers.facebook',
+#     'allauth.socialaccount.providers.google',
+#     'allauth.socialaccount.providers.openid',
+#     'allauth.socialaccount.providers.linkedin',
+#     'allauth.socialaccount.providers.linkedin_oauth2',
+    
 )
+
+LOGIN_REDIRECT_URL = '/'
 
 ROOT_URLCONF = 'django_cms.urls'
 
@@ -124,7 +135,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'sekizai.context_processors.sekizai',
                 'django.template.context_processors.static',
-                'cms.context_processors.cms_settings'
+                'cms.context_processors.cms_settings',
             ],
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
@@ -148,12 +159,14 @@ MIDDLEWARE_CLASSES = (
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
-    'cms.middleware.language.LanguageCookieMiddleware'
+    'cms.middleware.language.LanguageCookieMiddleware',
 )
 
 LANGUAGES = (
     ## Customize this
-    ('en', gettext('en')),
+    ('en', gettext('English')),
+	('fr', gettext('French')),
+	('ro', gettext('Romanian')),
 )
 
 CMS_LANGUAGES = {
@@ -161,13 +174,31 @@ CMS_LANGUAGES = {
     1: [
         {
             'code': 'en',
-            'name': gettext('en'),
+            'name': gettext('English'),
+            'fallbacks': ['ro'],
             'redirect_on_fallback': True,
             'public': True,
             'hide_untranslated': False,
         },
+		{
+			'code': 'fr',
+			'name': gettext('French'),
+			'fallbacks': ['en'],
+			'redirect_on_fallback': True,
+			'public': True,
+			'hide_untranslated': False,
+		},
+		{
+			'code': 'ro',
+			'name': gettext('Romanian'),
+			'fallbacks': ['en'],
+			'redirect_on_fallback': True,
+			'public': True,
+			'hide_untranslated': False,
+		},
     ],
     'default': {
+		'fallbacks': ['en', 'fr', 'ro'],
         'redirect_on_fallback': True,
         'public': True,
         'hide_untranslated': False,
@@ -209,6 +240,11 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.filters'
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+ 
 # CKEDITOR_SETTINGS = {
 # 	# 'languuage': '{{ language }}',
 # 	# 'toolbar': 'CMS',

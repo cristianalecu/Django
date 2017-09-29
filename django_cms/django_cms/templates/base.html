@@ -249,17 +249,31 @@
                 <!-- /.dropdown -->
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <img src="/static/iconarchive/{{LANGUAGE_CODE}}.png"/> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-language">
+                        <li><a href="{% page_language_url 'en' %}"><img src="{% static 'iconarchive/en.png' %}"/> English</a> </li>
+                        <li><a href="{% page_language_url 'fr' %}"><img src="{% static 'iconarchive/fr.png' %}"/> French</a> </li>
+                        <li><a href="{% page_language_url 'ro' %}"><img src="{% static 'iconarchive/ro.png' %}"/> Romanian</a> </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    {% if user.is_authenticated %}
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
                         <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
                         </li>
-                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        <li><a href="/accounts/password/change/"><i class="fa fa-gear fa-fw"></i> Change Password</a>
                         </li>
                         <li class="divider"></li>
-                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li><a href="/accounts/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout {{ user.username }}</a>
                         </li>
                     </ul>
+                    {% else %}
+                    <a href="/{{LANGUAGE_CODE}}/accounts/login/"><i class="fa fa-user fa-fw"></i> Login</a>
+                    {% endif %}
                     <!-- /.dropdown-user -->
                 </li>
                 <!-- /.dropdown -->
@@ -361,7 +375,7 @@
             </div>
             <!-- /.navbar-static-side -->
     </nav>
-    {% block content %}{% endblock content %}        
+    {% block content_SBA %}{% endblock %}        
     </div>
     <!-- /#wrapper -->
 
