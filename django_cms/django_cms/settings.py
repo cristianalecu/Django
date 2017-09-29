@@ -177,7 +177,9 @@ CMS_LANGUAGES = {
 CMS_TEMPLATES = (
     ## Customize this
     ('fullwidth.html', 'Fullwidth'),
-    ('fulldemo.html', 'Fulldemo'),
+    ('dashboard.html', 'Dashbard'),
+    ('tables.html', 'Tables'),
+    ('flotchart.html', 'Flotcharts'),
 )
 
 CMS_PERMISSION = True
