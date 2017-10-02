@@ -197,6 +197,8 @@ def supplierorder_new(request):
 	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
 	form.fields['supplier'].empty_label = 'Select a supplier'
 	form.fields['customer'].empty_label = 'Select a customer'
+	for xform in formset:
+		xform.fields['price'].disabled=True
 	args = {
 		'form_title': 'Supplier Order',
 		'formset_title': 'Order items',
@@ -216,6 +218,7 @@ def supplierorder_edit(request, pk):
 	SupplierOrderFormSet = modelformset_factory(
 		SupplierOrderItem, 
 		fields=('product', 'price', 'quantity', 'um'), 
+	    can_delete=True,
 		extra=1)
 	if request.method == "POST":
 		form = SupplierOrderForm(request.POST, instance=obj)
@@ -234,10 +237,10 @@ def supplierorder_edit(request, pk):
 		form = SupplierOrderForm(instance=obj)
 		formset = SupplierOrderFormSet(queryset=SupplierOrderItem.objects.filter(order=obj))
 
-# 	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
-# 	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
-# 	form.fields['supplier'].empty_label = 'Select a supplier'
-# 	form.fields['customer'].empty_label = 'Select a customer'
+	form.fields['supplier'].queryset = Supplier.objects.filter(user=request.user)
+	form.fields['customer'].queryset = Customer.objects.filter(user=request.user)
+	form.fields['supplier'].empty_label = 'Select a supplier'
+	form.fields['customer'].empty_label = 'Select a customer'
 	form.fields['supplier'].disabled = True
 	form.fields['customer'].disabled = True
 	for xform in formset:

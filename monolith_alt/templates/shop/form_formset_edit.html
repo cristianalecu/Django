@@ -39,21 +39,20 @@ function changeComboOptions(idx)
 
 function combo_change()
 {
+	var i;
 	var combo = $(this);
 	if(combo[0].id.startsWith('id_form-') && combo[0].id.endsWith('-product'))
 	{
 		var form_id = parseInt(combo[0].id.substr(8));
 		var prod_id = $(this).val();
-		if(filterPortfolio == 2)
-		{
-			$("#id_form-"+form_id+"-price").prop( "disabled", false );
-			if(pricePortoItems[prod_id] == undefined)
-				$("#id_form-"+form_id+"-price").val(priceItems[prod_id]);
-			else
-				$("#id_form-"+form_id+"-price").val(pricePortoItems[prod_id]);
-			$("#id_form-"+form_id+"-price").prop( "disabled", true );
-		}
-		else
+		
+		if(cntPortoItems > 0)
+			for(i=0; i<cntPortoItems; i++)
+				if(productPortoItems[i] == prod_id)
+				{
+					$("#id_form-"+form_id+"-price").val(pricePortoItems[ndxPortoItem[i]]);
+					return;
+				}
 			$("#id_form-"+form_id+"-price").val(priceItems[prod_id]);
 	}
 }
@@ -71,6 +70,7 @@ function add_first_line(ndx)
 		sNew = "form-"+i;
 		sHtml = $("#sheet-form-"+(i-1))[0].outerHTML;
 		$("#sheet-form-"+(i-1))[0].outerHTML = sHtml.split(sOld).join(sNew);
+		$('#id_form-'+i+'-product').change(combo_change);
 	}
 	append = empty_row.split(empty_form).join('form-0');  // replace(empty_form, xform) don't replace all
 	$("#sheet-form-1").before(append);
@@ -352,9 +352,9 @@ $(document).ready(function(){
 					{
 						ndxPortoItem[i] = data[i].pk; 
 						productPortoItems[i] = data[i].fields.product;
-						qtyPortoItems[ndxItem[i]] = data[i].fields.quantity;
-						pricePortoItems[ndxItem[i]] = data[i].fields.price;
-						umPortoItems[ndxItem[i]] = data[i].fields.um;
+						qtyPortoItems[ndxPortoItem[i]] = data[i].fields.quantity;
+						pricePortoItems[ndxPortoItem[i]] = data[i].fields.price;
+						umPortoItems[ndxPortoItem[i]] = data[i].fields.um;
 					}
 					if(!firstLoad)
 					{
@@ -368,6 +368,13 @@ $(document).ready(function(){
 							$('#id_form-'+i+'-quantity').val(qtyPortoItems[ndxPortoItem[i]]);
 							$('#id_form-'+i+'-um').val(umPortoItems[ndxPortoItem[i]]);
 						}			
+					}
+					else
+					{
+						for(i=0; i<cntPortoItems; i++)
+						{
+							$('#id_form-'+i+'-product').prop( "disabled", true );
+						}
 					}
 				}
 			}
