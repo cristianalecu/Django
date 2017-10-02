@@ -19,6 +19,7 @@ var priceItems = Array();
 
 var cntPortoItems = 0;  //portfolio items
 var ndxPortoItem = Array();
+var productPortoItems = Array();
 var pricePortoItems = Array();
 var qtyPortoItems = Array();
 var umPortoItems = Array();
@@ -140,6 +141,7 @@ function before_submit()
 		for(i=0; i<table_rows; i++)
 		{
 			$('#id_form-'+i+'-price').prop( "disabled", false );
+			$('#id_form-'+i+'-product').prop( "disabled", false );
 		}
 	return true;
 }
@@ -288,10 +290,10 @@ $(document).ready(function(){
 	old_customer_id=customer_id;
 	old_supplier_id = supplier_id;
 	
-	if( supplier_id >= 0 )
+	if( supplier_id > 0 )
 	{
 		get_Items();
-		if( customer_id >= 0 )
+		if( customer_id > 0 )
 			get_PortoItems(1);
 	}
 	
@@ -335,6 +337,7 @@ $(document).ready(function(){
 				
 				cntPortoItems = data.length;  //portfolio items
 				ndxPortoItem = Array();
+				productPortoItems = Array();
 				pricePortoItems = Array();
 				qtyPortoItems = Array();
 				umPortoItems = Array();
@@ -347,7 +350,8 @@ $(document).ready(function(){
 				{
 					for(i=0; i<data.length; i++)
 					{
-						ndxPortoItem[i] = data[i].fields.product;
+						ndxPortoItem[i] = data[i].pk; 
+						productPortoItems[i] = data[i].fields.product;
 						qtyPortoItems[ndxItem[i]] = data[i].fields.quantity;
 						pricePortoItems[ndxItem[i]] = data[i].fields.price;
 						umPortoItems[ndxItem[i]] = data[i].fields.um;
@@ -359,7 +363,8 @@ $(document).ready(function(){
 						for(i=0; i<cntPortoItems; i++)
 						{
 							$('#id_form-'+i+'-product').val(ndxPortoItem[i]);
-							$('#id_form-'+i+'-price').val(pricePortoItems[ndxPortoItem[i]]);
+							$('#id_form-'+i+'-product').prop( "disabled", true );
+							$('#id_form-'+i+'-price').val(productPortoItems[ndxPortoItem[i]]);
 							$('#id_form-'+i+'-quantity').val(qtyPortoItems[ndxPortoItem[i]]);
 							$('#id_form-'+i+'-um').val(umPortoItems[ndxPortoItem[i]]);
 						}			
