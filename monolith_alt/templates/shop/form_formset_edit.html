@@ -362,9 +362,9 @@ $(document).ready(function(){
 							add_first_line(cntPortoItems-i-1);
 						for(i=0; i<cntPortoItems; i++)
 						{
-							$('#id_form-'+i+'-product').val(ndxPortoItem[i]);
+							$('#id_form-'+i+'-product').val(productPortoItems[i]);
 							$('#id_form-'+i+'-product').prop( "disabled", true );
-							$('#id_form-'+i+'-price').val(productPortoItems[ndxPortoItem[i]]);
+							$('#id_form-'+i+'-price').val(pricePortoItems[ndxPortoItem[i]]);
 							$('#id_form-'+i+'-quantity').val(qtyPortoItems[ndxPortoItem[i]]);
 							$('#id_form-'+i+'-um').val(umPortoItems[ndxPortoItem[i]]);
 						}			
