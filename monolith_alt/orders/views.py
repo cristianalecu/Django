@@ -218,7 +218,7 @@ def supplierorder_edit(request, pk):
 	SupplierOrderFormSet = modelformset_factory(
 		SupplierOrderItem, 
 		fields=('product', 'price', 'quantity', 'um'), 
-	    can_delete=True,
+	    can_delete=True, 
 		extra=1)
 	if request.method == "POST":
 		form = SupplierOrderForm(request.POST, instance=obj)
@@ -245,7 +245,7 @@ def supplierorder_edit(request, pk):
 	form.fields['customer'].disabled = True
 	for xform in formset:
 		xform.fields['product'].queryset=Product.objects.filter(supplier=obj.supplier)
-		xform.fields['price'].disabled=True
+		xform.fields['price'].disabled=True 
 	args = {
 		'form_title': 'Supplier Order',
 		'formset_title': 'Order items',
